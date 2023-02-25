@@ -1,9 +1,32 @@
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
-import React from "react";
+import React, { MouseEventHandler, useCallback } from "react";
+import { BEinstance, FEinstance } from "src/utils/axios";
 
 export default function Home() {
+    const handleClick: MouseEventHandler<HTMLButtonElement> = async (event) => {
+        if (!event.defaultPrevented) {
+            await FEinstance.post(
+                "/api/auth",
+                {
+                    username: "terry",
+                    password: "123qwe!!",
+                },
+                { withCredentials: true }
+            )
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+    };
+    const handleLogout = async () =>{
+        const response = await BEinstance.post("/authentication/logout");
+        console.log(response);
+    }
     return (
         <div className={styles.container}>
             <Head>
@@ -66,6 +89,15 @@ export default function Home() {
                         </p>
                     </a>
                 </div>
+                <button
+                    className="bg-blue-500 p-2 rounded-full"
+                    onClick={(e) => handleClick(e)}
+                >
+                    click to login
+                </button>
+                <button className="bg-red-500 p-2 rounded-full" onClick={()=>handleLogout()}>
+                    logout
+                </button>
             </main>
 
             <footer className={styles.footer}>
