@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { BEinstance } from "../../utils/axios";
-import { cookies } from 'next/headers';
+import { cookies } from "next/headers";
 
 export default async function handler(
     req: NextApiRequest,
@@ -8,13 +8,10 @@ export default async function handler(
 ) {
     try {
         const body = req.body;
-        const response = await BEinstance.post(
-            "/authentication/login",
-            {
-                username: body.username,
-                password: body.password,
-            }
-        );
+        const response = await BEinstance.post("/authentication/login", {
+            username: body.username,
+            password: body.password,
+        });
         console.log(response.data);
         res.status(200).send({});
     } catch (error) {

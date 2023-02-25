@@ -23,10 +23,10 @@ export default function Home() {
                 });
         }
     };
-    const handleLogout = async () =>{
+    const handleLogout = async () => {
         const response = await BEinstance.post("/authentication/logout");
         console.log(response);
-    }
+    };
     return (
         <div className={styles.container}>
             <Head>
@@ -95,7 +95,10 @@ export default function Home() {
                 >
                     click to login
                 </button>
-                <button className="bg-red-500 p-2 rounded-full" onClick={()=>handleLogout()}>
+                <button
+                    className="bg-red-500 p-2 rounded-full"
+                    onClick={() => handleLogout()}
+                >
                     logout
                 </button>
             </main>
