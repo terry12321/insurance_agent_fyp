@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import create from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { UserState, UserStatus } from "../interfaces/UserState";
@@ -31,7 +30,18 @@ export const useUserStore = create<UserState>()(
                     });
             },
             logout: async () => {
-                return await BEinstance.post("/authentication/logout");
+                return await BEinstance.post("/authentication/logout").then((response)=>{
+                    if(response){
+                        set(()=>({
+                            user:{
+                                userStatus:UserStatus.LOGGED_OUT
+                            }
+                        }))
+                        return response
+                    }
+                }).catch((error)=>{
+                    return error;
+                })
             },
         }),
         { name: "userStorage", storage: createJSONStorage(() => localStorage) }

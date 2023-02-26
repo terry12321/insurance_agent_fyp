@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import React, { FormEvent, useCallback, useState } from "react";
 import { useUserStore } from "src/stores/UserStore";
+import {toast, Toaster} from 'react-hot-toast'
 
 const LoginComponent = () => {
     const [username, setUsername] = useState("");
@@ -14,11 +15,12 @@ const LoginComponent = () => {
                 .then((response) => {
                     console.log(response);
                     if (response.data.accessToken) {
-                        router.push("/about");
+                        router.push("/home");
                     }
                 })
                 .catch((error) => {
                     console.log(error);
+                    toast.error("Incorrect username or password. Please try again!")
                 });
         },
         [username, password]
@@ -61,6 +63,7 @@ const LoginComponent = () => {
                     </div>
                 </div>
             </form>
+            <Toaster position="bottom-right" reverseOrder={false} toastOptions={{ duration: 3000 }}/>
         </>
     );
 };

@@ -16,5 +16,5 @@ interface User {
 export interface UserState {
     user: User;
     login: (username: string, password: string) => Promise<AxiosResponse>;
-    logout: () => void;
+    logout: () => Promise<AxiosResponse>;
 }
