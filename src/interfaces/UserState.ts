@@ -1,3 +1,5 @@
+import { AxiosResponse } from "axios";
+
 /**
  * @enum {number}
  */
@@ -13,9 +15,6 @@ interface User {
 
 export interface UserState {
     user: User;
-    login: (
-        username: string,
-        password: string,
-      ) => Promise<boolean | undefined>;
-    logout:() => Promise<void>;
+    login: (username: string, password: string) => Promise<AxiosResponse>;
+    logout: () => void;
 }
