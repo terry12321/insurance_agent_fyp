@@ -4,7 +4,7 @@ import LoginComponent from "../components/login/LoginComponent";
 export default function Home() {
     return (
         <div className="flex h-screen bg-white">
-            <LoginComponent/>
+            <LoginComponent />
         </div>
     );
 }

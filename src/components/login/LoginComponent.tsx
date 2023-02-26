@@ -1,9 +1,5 @@
 import { useRouter } from "next/router";
-import React, {
-    FormEvent,
-    useCallback,
-    useState,
-} from "react";
+import React, { FormEvent, useCallback, useState } from "react";
 import { useUserStore } from "src/stores/UserStore";
 
 const LoginComponent = () => {

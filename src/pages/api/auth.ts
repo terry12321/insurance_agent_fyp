@@ -7,14 +7,11 @@ export default async function handler(
 ) {
     try {
         const body = req.body;
-        console.log(body)
-        const response = await BEinstance.post(
-            "/authentication/login",
-            {
-                username: body.username,
-                password: body.password,
-            }
-        );
+        console.log(body);
+        const response = await BEinstance.post("/authentication/login", {
+            username: body.username,
+            password: body.password,
+        });
 
         console.log(response);
         res.status(200).send({});
