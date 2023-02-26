@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import React, { FormEvent, useCallback, useState } from "react";
 import { useUserStore } from "src/stores/UserStore";
-import {toast, Toaster} from 'react-hot-toast'
+import { toast, Toaster } from "react-hot-toast";
 
 const LoginComponent = () => {
     const [username, setUsername] = useState("");
@@ -20,7 +20,9 @@ const LoginComponent = () => {
                 })
                 .catch((error) => {
                     console.log(error);
-                    toast.error("Incorrect username or password. Please try again!")
+                    toast.error(
+                        "Incorrect username or password. Please try again!"
+                    );
                 });
         },
         [username, password]
@@ -63,7 +65,11 @@ const LoginComponent = () => {
                     </div>
                 </div>
             </form>
-            <Toaster position="bottom-right" reverseOrder={false} toastOptions={{ duration: 3000 }}/>
+            <Toaster
+                position="bottom-right"
+                reverseOrder={false}
+                toastOptions={{ duration: 3000 }}
+            />
         </>
     );
 };

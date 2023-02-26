@@ -9,8 +9,8 @@ export default function About() {
     const router = useRouter();
 
     const handleLogout = async () => {
-        await logout().then((response)=>{
-            if(response){
+        await logout().then((response) => {
+            if (response) {
                 router.push("/");
             }
         });
