@@ -4,7 +4,14 @@ import { useRouter } from "next/router";
 import React from "react";
 import { Fragment, useEffect, useState } from "react";
 import { UserStatus } from "src/interfaces/UserState";
-import { ChevronDown, ChevronUp, Mail, Underline, User, UserCircle } from "tabler-icons-react";
+import {
+    ChevronDown,
+    ChevronUp,
+    Mail,
+    Underline,
+    User,
+    UserCircle,
+} from "tabler-icons-react";
 import { useUserStore } from "../stores/UserStore";
 
 export default function About() {
@@ -89,7 +96,11 @@ export default function About() {
                             }) => (
                                 <div className="" key={id}>
                                     <button
-                                        className={`flex w-full justify-between ${isOpen ? "rounded-t-lg":"rounded-lg"} bg-cyan-600 px-4 py-2 text-left font-medium text-white hover:bg-cyan-700`}
+                                        className={`flex w-full justify-between ${
+                                            isOpen
+                                                ? "rounded-t-lg"
+                                                : "rounded-lg"
+                                        } bg-cyan-600 px-4 py-2 text-left font-medium text-white hover:bg-cyan-700`}
                                         onClick={() => handleClick(id)}
                                         aria-expanded={isOpen}
                                         {...(isOpen && { "aria-controls": id })}

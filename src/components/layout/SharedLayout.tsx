@@ -11,9 +11,7 @@ const SharedLayout = ({ children }: { children: ReactNode }) => {
             <div className="fixed h-screen w-2/12">
                 <Sidebar />
             </div>
-            <div className="fixed h-screen right-0 w-10/12">
-            {children}
-            </div>
+            <div className="fixed h-screen right-0 w-10/12">{children}</div>
             <Toaster
                 position="bottom-right"
                 reverseOrder={false}
