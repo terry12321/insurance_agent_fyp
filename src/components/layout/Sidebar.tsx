@@ -42,7 +42,9 @@ const Sidebar = () => {
                     <a href="/forum">
                         <button
                             className={`rounded-lg w-full hover:bg-cyan-100 hover:text-white py-2 ${
-                                pathname === "/forum" ? "bg-cyan-100 text-white" : ""
+                                pathname === "/forum"
+                                    ? "bg-cyan-100 text-white"
+                                    : ""
                             }`}
                         >
                             Forum
