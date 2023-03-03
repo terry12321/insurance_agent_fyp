@@ -29,7 +29,7 @@ function usePrevious(state: number) {
     }
     return tuple[0];
 }
-export default function AllUser({path}:{path:string;}) {
+export default function AllUser({ path }: { path: string }) {
     const [count, setCount] = useState(1);
     const [tuple, setTuple] = useState([0, count]); // [prev,current]
     const [ref, { width }] = useMeasure();
@@ -80,60 +80,59 @@ export default function AllUser({path}:{path:string;}) {
         const finalIndex = startIndex + 6;
         setDisplayArr(userArr.slice(startIndex, finalIndex));
     }, [count, direction]);
-    return <>
-    <div className="w-1/6 flex justify-center">
-        <button
-            className={`disabled:bg-gray-500 bg-cyan-500 rounded-full`}
-            onClick={() => {
-                setCount(count - 1);
-            }}
-            disabled={count === 1}
-        >
-            <ArrowUpCircle className="h-10 w-10 -rotate-90 text-white" />
-        </button>
-    </div>
-    <div
-        ref={ref}
-        className="relative flex w-full h-full items-center justify-center overflow-hidden"
-    >
-        <AnimatePresence custom={{ direction, width }}>
-            <motion.div
-                key={count + 1}
-                variants={variants}
-                custom={{ direction, width }}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                className={`absolute flex w-[90%] h-[90%] items-center justify-center`}
+    return (
+        <>
+            <div className="w-1/6 flex justify-center">
+                <button
+                    className={`disabled:bg-gray-500 bg-cyan-500 rounded-full`}
+                    onClick={() => {
+                        setCount(count - 1);
+                    }}
+                    disabled={count === 1}
+                >
+                    <ArrowUpCircle className="h-10 w-10 -rotate-90 text-white" />
+                </button>
+            </div>
+            <div
+                ref={ref}
+                className="relative flex w-full h-full items-center justify-center overflow-hidden"
             >
-                <div className="grid grid-cols-3 justify-items-center content-center w-full h-full gap-6">
-                    {displayArr.map((user, index) => {
-                        return (
-                            <a
-                                key={index}
-                                href={`${path}?ct=${index}`}
-                            >
-                                <div className="flex flex-col items-center">
-                                    <UserCircle className="text-cyan-500 h-40 w-40" />
-                                    {user.name}
-                                </div>
-                            </a>
-                        );
-                    })}
-                </div>
-            </motion.div>
-        </AnimatePresence>
-    </div>
-    <div className="w-1/6 flex justify-center">
-        <button
-            className={`disabled:bg-gray-500 bg-cyan-500 rounded-full`}
-            onClick={() => {
-                setCount(count + 1);
-            }}
-            disabled={count === pages}
-        >
-            <ArrowUpCircle className="h-10 w-10 rotate-90 text-white" />
-        </button>
-    </div>
-</>;
+                <AnimatePresence custom={{ direction, width }}>
+                    <motion.div
+                        key={count + 1}
+                        variants={variants}
+                        custom={{ direction, width }}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        className={`absolute flex w-[90%] h-[90%] items-center justify-center`}
+                    >
+                        <div className="grid grid-cols-3 justify-items-center content-center w-full h-full gap-6">
+                            {displayArr.map((user, index) => {
+                                return (
+                                    <a key={index} href={`${path}?ct=${index}`}>
+                                        <div className="flex flex-col items-center">
+                                            <UserCircle className="text-cyan-500 h-40 w-40" />
+                                            {user.name}
+                                        </div>
+                                    </a>
+                                );
+                            })}
+                        </div>
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+            <div className="w-1/6 flex justify-center">
+                <button
+                    className={`disabled:bg-gray-500 bg-cyan-500 rounded-full`}
+                    onClick={() => {
+                        setCount(count + 1);
+                    }}
+                    disabled={count === pages}
+                >
+                    <ArrowUpCircle className="h-10 w-10 rotate-90 text-white" />
+                </button>
+            </div>
+        </>
+    );
 }

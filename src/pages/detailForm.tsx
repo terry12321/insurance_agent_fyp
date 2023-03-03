@@ -113,7 +113,8 @@ export default function DetailForm() {
                                                     color="white"
                                                     secondaryColor="white"
                                                 />
-                                            ) : user.userAuthenticate === UserAuthenticate.AUTHORIZED ? (
+                                            ) : user.userAuthenticate ===
+                                              UserAuthenticate.AUTHORIZED ? (
                                                 "Success!"
                                             ) : (
                                                 "Authenticate"

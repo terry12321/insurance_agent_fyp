@@ -11,7 +11,7 @@ export enum UserStatus {
 
 export enum UserAuthenticate {
     AUTHORIZED,
-    UNAUTHORIZED
+    UNAUTHORIZED,
 }
 
 interface User {
