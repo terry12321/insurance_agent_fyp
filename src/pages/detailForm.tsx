@@ -6,7 +6,7 @@ export default function DetailForm() {
     const [NRIC, setNRIC] = useState("S9999288C");
     const [address, setAddress] = useState("Blk 100 NTU CRESCENT #10-142");
     return (
-        <div className="h-5/6 border-[3px] border-cyan-600 w-5/6 p-20 rounded-[150px] flex items-center justify-center bg-white text-black">
+        <div className="h-5/6 border-[3px] border-cyan-600 w-5/6 p-20 rounded-[24px] flex items-center justify-center bg-white text-black">
             <div className="flex flex-col gap-10 w-full h-full justify-center">
                 <div>
                     <label className="text-gray-500 pl-2">Name</label>

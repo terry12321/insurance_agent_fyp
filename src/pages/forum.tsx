@@ -8,7 +8,7 @@ export default function Forum() {
         { title: "Title 6", description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. " },
     ];
     return (
-        <div className="bg-white h-5/6 w-5/6 grid grid-cols-3 gap-2 p-10 overflow-auto">
+        <div className="bg-white h-5/6 w-5/6 grid grid-cols-3 rounded-[24px] border-cyan-600 border-[3px] gap-2 p-10 overflow-auto">
             {forumArr.map((value, index) => {
                 return (
                     <div className="bg-cyan-600 rounded-lg flex flex-col gap-4" key={index}>
