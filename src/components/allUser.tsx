@@ -36,34 +36,202 @@ export default function AllUser({ path }: { path: string }) {
     const [displayArr, setDisplayArr] = useState<Array<User>>([]);
 
     const userArr = [
-        { name: "Terry1", email: "TerryTan1@gmail.com" },
-        { name: "Terry2", email: "TerryTan2@gmail.com" },
-        { name: "Terry3", email: "TerryTan3@gmail.com" },
-        { name: "Terry4", email: "TerryTan4@gmail.com" },
-        { name: "Terry5", email: "TerryTan5@gmail.com" },
-        { name: "Terry6", email: "TerryTan6@gmail.com" },
-        { name: "Terry7", email: "TerryTan7@gmail.com" },
-        { name: "Terry8", email: "TerryTan8@gmail.com" },
-        { name: "Terry9", email: "TerryTan9@gmail.com" },
-        { name: "Terry10", email: "TerryTan10@gmail.com" },
-        { name: "Terry11", email: "TerryTan11@gmail.com" },
-        { name: "Terry12", email: "TerryTan12@gmail.com" },
-        { name: "Terry13", email: "TerryTan13@gmail.com" },
-        { name: "Terry14", email: "TerryTan14@gmail.com" },
-        { name: "Terry15", email: "TerryTan15@gmail.com" },
-        { name: "Terry16", email: "TerryTan16@gmail.com" },
-        { name: "Terry17", email: "TerryTan17@gmail.com" },
-        { name: "Terry18", email: "TerryTan18@gmail.com" },
-        { name: "Terry19", email: "TerryTan19@gmail.com" },
-        { name: "Terry20", email: "TerryTan20@gmail.com" },
-        { name: "Terry21", email: "TerryTan21@gmail.com" },
-        { name: "Terry22", email: "TerryTan22@gmail.com" },
-        { name: "Terry23", email: "TerryTan23@gmail.com" },
-        { name: "Terry24", email: "TerryTan24@gmail.com" },
-        { name: "Terry25", email: "TerryTan25@gmail.com" },
-        { name: "Terry26", email: "TerryTan26@gmail.com" },
-        { name: "Terry27", email: "TerryTan27@gmail.com" },
-        { name: "Terry28", email: "TerryTan28@gmail.com" },
+        {
+            name: "User1",
+            email: "TUser1@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User2",
+            email: "TUser2@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User3",
+            email: "TUser3@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User4",
+            email: "TUser4@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User5",
+            email: "TUser5@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User6",
+            email: "TUser6@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User7",
+            email: "TUser7@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User8",
+            email: "TUser8@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User9",
+            email: "TUser9@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User10",
+            email: "Usern10@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User11",
+            email: "Usern11@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User12",
+            email: "Usern12@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User13",
+            email: "Usern13@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User14",
+            email: "Usern14@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User15",
+            email: "Usern15@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User16",
+            email: "Usern16@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User17",
+            email: "Usern17@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User18",
+            email: "Usern18@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User19",
+            email: "Usern19@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User20",
+            email: "Usern20@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User21",
+            email: "Usern21@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User22",
+            email: "Usern22@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User23",
+            email: "Usern23@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User24",
+            email: "Usern24@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User25",
+            email: "Usern25@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User26",
+            email: "Usern26@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User27",
+            email: "Usern27@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
+        {
+            name: "User28",
+            email: "Usern28@gmail.com",
+            sex: "",
+            NRIC: "",
+            address: "",
+        },
     ];
     const pages = Math.ceil(userArr.length / 6);
 
@@ -82,7 +250,7 @@ export default function AllUser({ path }: { path: string }) {
     }, [count, direction]);
     return (
         <>
-            <div className="w-1/6 flex justify-center">
+            <div className="w-1/6 flex justify-center items-center">
                 <button
                     className={`disabled:bg-gray-500 bg-cyan-500 rounded-full`}
                     onClick={() => {
@@ -90,7 +258,10 @@ export default function AllUser({ path }: { path: string }) {
                     }}
                     disabled={count === 1}
                 >
-                    <ArrowUpCircle className="h-10 w-10 -rotate-90 text-white" />
+                    <ArrowUpCircle
+                        size={60}
+                        className="-rotate-90 text-white"
+                    />
                 </button>
             </div>
             <div
@@ -122,7 +293,7 @@ export default function AllUser({ path }: { path: string }) {
                     </motion.div>
                 </AnimatePresence>
             </div>
-            <div className="w-1/6 flex justify-center">
+            <div className="w-1/6 flex justify-center items-center">
                 <button
                     className={`disabled:bg-gray-500 bg-cyan-500 rounded-full`}
                     onClick={() => {
@@ -130,7 +301,7 @@ export default function AllUser({ path }: { path: string }) {
                     }}
                     disabled={count === pages}
                 >
-                    <ArrowUpCircle className="h-10 w-10 rotate-90 text-white" />
+                    <ArrowUpCircle size={60} className="rotate-90 text-white" />
                 </button>
             </div>
         </>

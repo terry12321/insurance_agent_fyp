@@ -94,7 +94,7 @@ export default function About() {
         }
     }, []);
     return (
-        <div className="flex h-5/6 items-center justify-center border-[3px] border-cyan-600 w-5/6 px-4 py-10 rounded-[24px] bg-white text-black">
+        <div className="flex h-5/6 items-center justify-center w-5/6 px-4 py-10 rounded-[24px] bg-white text-black">
             {ct ? (
                 /***** Client Portfolio's page *****/
                 <>

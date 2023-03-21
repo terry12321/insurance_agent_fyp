@@ -32,18 +32,18 @@ export default function Forum() {
         },
     ];
     return (
-        <div className="bg-white h-5/6 w-5/6 grid grid-cols-3 rounded-[24px] border-cyan-600 border-[3px] gap-2 p-10 overflow-auto">
+        <div className="bg-white text-gray-100 h-5/6 w-5/6 grid grid-cols-3 rounded-[24px] gap-6 p-10 overflow-auto">
             {forumArr.map((value, index) => {
                 return (
                     <div
-                        className="bg-cyan-600 rounded-lg flex flex-col gap-4"
+                        className={`${index%2 === 0 ? "bg-[#457b9d]":"bg-[#1d3557]"} rounded-lg flex flex-col gap-4`}
                         key={index}
                     >
-                        <div className="text-xl py-2 text-center">
+                        <div className="text-5xl bg-gray-600 rounded-t-md py-6 text-center">
                             {value.title}
                         </div>
 
-                        <div className="text-center px-4">
+                        <div className="text-center px-10">
                             {value.description}
                         </div>
                     </div>
