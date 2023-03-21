@@ -1,6 +1,10 @@
 import create from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { UserState, UserStatus } from "../interfaces/UserState";
+import {
+    UserAuthenticate,
+    UserState,
+    UserStatus,
+} from "../interfaces/UserState";
 import { BEinstance } from "../utils/axios";
 
 export const useUserStore = create<UserState>()(
@@ -8,6 +12,7 @@ export const useUserStore = create<UserState>()(
         (set) => ({
             user: {
                 userStatus: UserStatus.LOGGED_OUT,
+                userAuthenticate: UserAuthenticate.UNAUTHORIZED,
             },
             login: async (username: string, password: string) => {
                 return await BEinstance.post("/authentication/login", {
@@ -19,6 +24,8 @@ export const useUserStore = create<UserState>()(
                             set(() => ({
                                 user: {
                                     userStatus: UserStatus.LOGGED_IN,
+                                    userAuthenticate:
+                                        UserAuthenticate.UNAUTHORIZED,
                                 },
                             }));
                             return response;
@@ -36,6 +43,8 @@ export const useUserStore = create<UserState>()(
                             set(() => ({
                                 user: {
                                     userStatus: UserStatus.LOGGED_OUT,
+                                    userAuthenticate:
+                                        UserAuthenticate.UNAUTHORIZED,
                                 },
                             }));
                             return response;
@@ -45,6 +54,13 @@ export const useUserStore = create<UserState>()(
                         return error;
                     });
             },
+            authenticateDetail: () =>
+                set(() => ({
+                    user: {
+                        userStatus: UserStatus.LOGGED_IN,
+                        userAuthenticate: UserAuthenticate.AUTHORIZED,
+                    },
+                })),
         }),
         { name: "userStorage", storage: createJSONStorage(() => localStorage) }
     )
