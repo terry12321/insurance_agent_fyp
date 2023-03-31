@@ -1,5 +1,7 @@
+import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
 import { useUserStore } from "src/stores/UserStore";
+import { Logout, News } from "tabler-icons-react";
 
 const Sidebar = () => {
     const { pathname } = useRouter();
@@ -15,49 +17,45 @@ const Sidebar = () => {
 
     return (
         <>
-            <div className="flex h-full flex-col justify-between bg-btnColor-300 bg-white px-10 text-black">
-                <div className="flex flex-col gap-6 mt-40">
-                    <a href="/home">
+            <div className="flex h-full flex-col justify-between bg-btnColor-300 bg-black text-white">
+                <div className="flex flex-col mt-40">
+                    <a
+                        href="/home"
+                        className={`w-full hover:bg-white hover:text-black px-20 ${
+                            pathname === "/home" ? "bg-white text-black" : ""
+                        }`}
+                    >
                         <button
-                            className={`rounded-lg w-full hover:bg-cyan-100 text-center hover:text-white py-2 ${
-                                pathname === "/home"
-                                    ? "bg-cyan-100 text-white"
-                                    : ""
-                            }`}
+                            className={`flex items-center justify-start gap-2 hover:bg-white text-2xl text-center hover:text-black py-8 `}
                         >
+                            <News className="h-8 w-8" />
                             Client Portfolio
                         </button>
                     </a>
-                    <a href="/detailForm">
-                        <button
-                            className={`rounded-lg w-full hover:bg-cyan-100 hover:text-white py-2 ${
-                                pathname === "/detailForm"
-                                    ? "bg-cyan-100 text-white"
-                                    : ""
-                            }`}
-                        >
-                            Client Detail Form
-                        </button>
-                    </a>
-                    <a href="/forum">
-                        <button
-                            className={`rounded-lg w-full hover:bg-cyan-100 hover:text-white py-2 ${
-                                pathname === "/forum"
-                                    ? "bg-cyan-100 text-white"
-                                    : ""
-                            }`}
-                        >
-                            Forum
-                        </button>
-                    </a>
-                </div>
-                <div className="flex justify-center items-center mb-10">
-                    <button
-                        className="bg-black/50 hover:bg-black w-1/2 text-white text-center rounded-lg py-2"
-                        onClick={handleLogout}
+                    <a
+                        href="/forum"
+                        className={`w-full hover:bg-white hover:text-black px-20 ${
+                            pathname === "/forum" ? "bg-white text-black" : ""
+                        }`}
                     >
-                        logout
-                    </button>
+                        <button
+                            className={`flex items-center justify-start gap-2 hover:bg-white text-2xl hover:text-black py-8`}
+                        >
+                            <CalendarDaysIcon className="h-8 w-8" />
+                            Bulletin Board
+                        </button>
+                    </a>
+                    <span
+                        className={`w-full hover:bg-white hover:text-black px-20`}
+                    >
+                        <button
+                            className={`flex items-center justify-start gap-2 hover:bg-white text-2xl hover:text-black py-8`}
+                            onClick={handleLogout}
+                        >
+                            <Logout className="h-8 w-8" />
+                            Logout
+                        </button>
+                    </span>
                 </div>
             </div>
         </>

@@ -21,7 +21,7 @@ interface User {
 
 export interface UserState {
     user: User;
-    login: (username: string, password: string) => Promise<AxiosResponse>;
+    login: (email: string, password: string) => Promise<AxiosResponse>;
     logout: () => Promise<AxiosResponse>;
     authenticateDetail: () => void;
 }

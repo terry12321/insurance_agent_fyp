@@ -14,9 +14,9 @@ export const useUserStore = create<UserState>()(
                 userStatus: UserStatus.LOGGED_OUT,
                 userAuthenticate: UserAuthenticate.UNAUTHORIZED,
             },
-            login: async (username: string, password: string) => {
+            login: async (email: string, password: string) => {
                 return await BEinstance.post("/authentication/login", {
-                    username: username,
+                    email: email,
                     password: password,
                 })
                     .then((response) => {

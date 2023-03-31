@@ -1,12 +1,13 @@
 import { useRouter } from "next/router";
 import React, { FormEvent, useCallback, useState } from "react";
 import { useUserStore } from "src/stores/UserStore";
-import { toast, Toaster } from "react-hot-toast";
-import Image from "next/image";
+import { toast } from "react-hot-toast";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
 const LoginComponent = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [showPass, setShowPass] = useState(false);
     const login = useUserStore((state) => state.login);
     const router = useRouter();
     const handleClick = useCallback(
@@ -14,13 +15,11 @@ const LoginComponent = () => {
             e.preventDefault();
             login(username, password)
                 .then((response) => {
-                    console.log(response);
                     if (response.data.accessToken) {
                         router.push("/home");
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
                     toast.error(
                         "Incorrect username or password. Please try again!"
                     );
@@ -29,21 +28,47 @@ const LoginComponent = () => {
         [username, password]
     );
     return (
-        <>
-            <div className="w-full">
-                <div className="flex bg-black w-full h-20">
-                    <span className="flex items-center px-4">
-                    <Image className="" alt={"FA-Guardix"} width={200} height={200} src={"/images/logo.svg"} />
+        <div className="w-full">
+            <div className="flex flex-col gap-10">
+                <span className="text-6xl text-center">Sign in</span>
+                <form
+                    onSubmit={(e) => handleClick(e)}
+                    className="flex flex-col gap-6"
+                >
+                    <input
+                        type={"text"}
+                        placeholder="Username"
+                        onChange={(e) => setUsername(e.target.value)}
+                        className="w-full px-4 py-2 rounded-lg bg-[#E9E9E9] focus:ring-0 focus:outline-none"
+                    />
+                    <label className="relative">
+                        <input
+                            type={showPass ? "text" : "password"}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Password"
+                            className="w-full px-4 py-2 rounded-lg bg-[#E9E9E9] focus:ring-0 focus:outline-none"
+                        />
+                        <span onClick={() => setShowPass(!showPass)}>
+                            {showPass ? (
+                                <EyeSlashIcon className="absolute hover:cursor-pointer right-2 top-3 w-6 h-6" />
+                            ) : (
+                                <EyeIcon className="absolute hover:cursor-pointer right-2 top-3 w-6 h-6" />
+                            )}
+                        </span>
+                    </label>
+                    <a href="/resetPassword">Forget password?</a>
 
-                    </span>
-                </div>
+                    <div className="flex justify-center">
+                        <button
+                            type="submit"
+                            className="bg-[#424760] text-white rounded-lg p-2 w-3/12"
+                        >
+                            Sign In
+                        </button>
+                    </div>
+                </form>
             </div>
-            <Toaster
-                position="bottom-right"
-                reverseOrder={false}
-                toastOptions={{ duration: 3000 }}
-            />
-        </>
+        </div>
     );
 };
 
