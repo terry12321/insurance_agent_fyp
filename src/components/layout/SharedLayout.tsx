@@ -9,12 +9,12 @@ const SharedLayout = ({ children }: { children: ReactNode }) => {
     const router = useRouter();
 
     const AuthedComponent = () => (
-        <div className="">
-            <div className="fixed h-screen w-2/12">
+        <div className="flex">
+            <div className="w-2/12">
                 <Sidebar />
             </div>
-            <div className="fixed h-screen right-0 w-10/12 bg-white">
-                <div className="flex justify-center items-center my-auto h-screen">
+            <div className="w-10/12 bg-white h-screen overflow-y-auto py-10">
+                <div className="flex justify-center items-center my-auto">
                     {children}
                 </div>
             </div>

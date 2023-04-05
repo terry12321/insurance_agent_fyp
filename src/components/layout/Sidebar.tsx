@@ -33,9 +33,9 @@ const Sidebar = () => {
                         </button>
                     </a>
                     <a
-                        href="/forum"
+                        href="/bulletin"
                         className={`w-full hover:bg-white hover:text-black px-20 ${
-                            pathname === "/forum" ? "bg-white text-black" : ""
+                            pathname === "/bulletin" ? "bg-white text-black" : ""
                         }`}
                     >
                         <button
