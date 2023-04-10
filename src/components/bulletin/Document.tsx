@@ -8,6 +8,7 @@ import { DotsVertical, Trash } from "tabler-icons-react";
 import fileDownload from "js-file-download";
 import { Dropdown } from "antd";
 import { toast } from "react-hot-toast";
+import { DeleteModal } from "../common/DeleteModal";
 
 const getExtension = (url: string) => {
     const extension = url.substring(url.lastIndexOf("."));
@@ -34,6 +35,11 @@ export const DocumentPage = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [files, setFiles] = useState<UserFileUrlType[]>([]);
     const [hoverIcon, setHoverIcon] = useState(-1);
+    const [isDelete, setIsDelete] = useState(false);
+    const [isOpenDelModal, setIsOpenDelModal] = useState(false);
+    const [delFile, setDelFile] = useState<UserFileUrlType | undefined>(
+        undefined
+    );
     const getFilesCallback = useCallback(async () => {
         const data = await BEinstance.get("/users/get-files").then(
             async (files) => {
@@ -75,6 +81,12 @@ export const DocumentPage = () => {
     useEffect(() => {
         getFilesCallback();
     }, []);
+
+    useEffect(() => {
+        if (!isOpenDelModal && delFile && isDelete) {
+            deleteFile(delFile);
+        }
+    }, [isOpenDelModal]);
     return (
         <>
             <span className="flex justify-between items-center text-black">
@@ -121,7 +133,8 @@ export const DocumentPage = () => {
                                     <button
                                         onClick={() => {
                                             if (file.id) {
-                                                deleteFile(file);
+                                                setDelFile(file);
+                                                setIsOpenDelModal(true);
                                             }
                                         }}
                                     >
@@ -143,7 +156,7 @@ export const DocumentPage = () => {
                                                     },
                                                 ],
                                             }}
-                                            trigger={["click", "hover"]}
+                                            trigger={["click"]}
                                         >
                                             <a
                                                 onClick={(e) =>
@@ -182,6 +195,13 @@ export const DocumentPage = () => {
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
                 getFilesCallback={getFilesCallback}
+            />
+            <DeleteModal
+                title="Delete File"
+                description="Are you sure you want to delete?"
+                isOpen={isOpenDelModal}
+                setIsOpen={setIsOpenDelModal}
+                setIsDelete={setIsDelete}
             />
         </>
     );

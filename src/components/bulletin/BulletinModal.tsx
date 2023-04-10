@@ -1,7 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { DatePicker } from "antd";
 import { Dayjs } from "dayjs";
-import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, Fragment, SetStateAction } from "react";
 import { X } from "tabler-icons-react";
 
 export const BulletinModal = ({
@@ -12,8 +12,8 @@ export const BulletinModal = ({
     setContent,
     addTask,
 }: BulletinModalProps) => {
-    function closeModal() {
-        addTask();
+    async function closeModal() {
+        await addTask();
         setIsOpen(false);
     }
 

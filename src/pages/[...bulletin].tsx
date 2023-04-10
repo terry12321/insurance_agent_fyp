@@ -1,3 +1,4 @@
+import { Dropdown } from "antd";
 import { Dayjs } from "dayjs";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -5,83 +6,31 @@ import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import { BulletinModal } from "src/components/bulletin/BulletinModal";
 import { DocumentPage } from "src/components/bulletin/Document";
 import { StrictDroppable } from "src/components/bulletin/StrictDroppable";
+import { DeleteModal } from "src/components/common/DeleteModal";
 import { BEinstance } from "src/utils/axios";
-import { DotsVertical, Plus } from "tabler-icons-react";
+import { DotsVertical, Note, Plus } from "tabler-icons-react";
 
-interface Sticker {
+interface Note {
+    id?: number;
     date: string;
     content: string;
+    cardId: string;
 }
 interface Card {
     id: string;
+    cardId: string;
     title: string;
-    notes: Sticker[];
+    notes: Note[];
     color: string;
     btnColor: string;
 }
 
 export default function Forum() {
-    const cards: Card[] = [
-        {
-            title: "To Do",
-            id: "card1",
-            notes: [
-                {
-                    date: "Wednesday, 22th March 2023",
-                    content: "Meet Titus Low at Yishun for ketchup",
-                },
-                {
-                    date: "Thursday, 23th March 2023",
-                    content:
-                        "Book a dentist appointment due to eating the wrong suace at ice cream place",
-                },
-                {
-                    date: "Sunday, 19th March 2023",
-                    content: "Set up a meeting with jenna for some croffle",
-                },
-            ],
-            color: "bg-[#CDDFE0]",
-            btnColor: "bg-[#B5CACB]",
-        },
-        {
-            title: "In Progress",
-            id: "card2",
-            notes: [
-                {
-                    date: "Friday, 17th March 2023",
-                    content: "Zile's TCM Claim",
-                },
-                {
-                    date: "Monday, 20th March 2023 ",
-                    content: "Terry's FYP",
-                },
-            ],
-            color: "bg-[#D9D8FF]",
-            btnColor: "bg-[#C0BFE7]",
-        },
-        {
-            title: "Completed",
-            id: "card3",
-            notes: [
-                {
-                    date: "Wednesday, 8th March 2023",
-                    content: "Babysit Moonbear",
-                },
-                {
-                    date: "Wednesday, December 88 8888",
-                    content: "Process Amie's Wife insurance",
-                },
-                {
-                    date: "Monday, 13th March 2023",
-                    content: "Jia Hui's birthday gift",
-                },
-            ],
-            color: "bg-[#D0E7C6]",
-            btnColor: "bg-[#AFCAA4]",
-        },
-    ];
     const [items, setItems] = useState<Card[]>([]);
     const [isOpen, setIsOpen] = useState(false);
+    const [isDelete, setIsDelete] = useState(false);
+    const [isOpenDelModal, setIsOpenDelModal] = useState(false);
+    const [delId, setDelId] = useState<number | undefined>(undefined);
     const [date, setDate] = useState<Dayjs | null>(null);
     const [content, setContent] = useState("");
     const [cardId, setCardId] = useState("");
@@ -90,28 +39,42 @@ export default function Forum() {
     function openModal() {
         setIsOpen(true);
     }
-    const addTask = () => {
+    const getAllItems = async () => {
+        await BEinstance.get("/task/get-all-task").then((value) => {
+            setItems(value.data);
+        });
+    };
+    const addTask = async () => {
         if (date) {
             const weekday = date.format("dddd");
             const month = date.format("MMMM");
             const day = date.format("DD");
             const year = date.format("YYYY");
             const finalDate = `${weekday}, ${day}th ${month} ${year}`;
-            const note = {
-                date: finalDate,
-                content: content,
-            };
-            const finalItems = items;
-            const item = finalItems.find((val) => {
-                return val.id.toString() === cardId;
+            const noteCardId = items.find((value) => {
+                return value.id.toString() === cardId;
             });
-            if (item) {
-                item.notes.push(note);
+            if (noteCardId) {
+                const note: Note = {
+                    date: finalDate,
+                    content: content,
+                    cardId: noteCardId.cardId,
+                };
+                await BEinstance.post("/task", note).then(async (value) => {
+                    if (value) {
+                        await getAllItems();
+                        setDate(null);
+                    }
+                });
             }
-            console.log(finalItems);
-            setItems(finalItems);
-            setDate(null);
         }
+    };
+    const deleteNote = async (id: number) => {
+        await BEinstance.post(`/task/${id}`).then(async (value) => {
+            if (value) {
+                await getAllItems();
+            }
+        });
     };
     const dragEnd = (result: DropResult) => {
         const { source, destination } = result;
@@ -145,13 +108,14 @@ export default function Forum() {
     };
 
     useEffect(() => {
-        const getAllItems = async () => {
-            await BEinstance.get("/task/get-all-task").then((value) => {
-                setItems(value.data);
-            });
-        };
         getAllItems();
     }, []);
+
+    useEffect(() => {
+        if (!isOpenDelModal && delId && isDelete) {
+            deleteNote(delId);
+        }
+    }, [isOpenDelModal]);
     return (
         <div className="w-5/6 flex flex-col gap-10">
             <div className="flex gap-16 justify-end w-full text-black pl-4 py-4">
@@ -225,11 +189,46 @@ export default function Forum() {
                                                                             }
                                                                         </span>
                                                                         <span className="w-1/12 pt-1">
-                                                                            <DotsVertical
-                                                                                size={
-                                                                                    20
+                                                                            <Dropdown
+                                                                                arrow={
+                                                                                    false
                                                                                 }
-                                                                            />
+                                                                                placement="bottom"
+                                                                                menu={{
+                                                                                    items: [
+                                                                                        {
+                                                                                            label: "delete",
+                                                                                            key: 0,
+                                                                                            onClick:
+                                                                                                () => {
+                                                                                                    setDelId(
+                                                                                                        item.id
+                                                                                                    );
+                                                                                                    setIsOpenDelModal(
+                                                                                                        true
+                                                                                                    );
+                                                                                                },
+                                                                                        },
+                                                                                    ],
+                                                                                }}
+                                                                                trigger={[
+                                                                                    "click",
+                                                                                ]}
+                                                                            >
+                                                                                <a
+                                                                                    onClick={(
+                                                                                        e
+                                                                                    ) =>
+                                                                                        e.preventDefault()
+                                                                                    }
+                                                                                >
+                                                                                    <DotsVertical
+                                                                                        size={
+                                                                                            20
+                                                                                        }
+                                                                                    />
+                                                                                </a>
+                                                                            </Dropdown>
                                                                         </span>
                                                                     </div>
                                                                     <div></div>
@@ -269,6 +268,13 @@ export default function Forum() {
                         setIsOpen={setIsOpen}
                         setContent={setContent}
                         addTask={addTask}
+                    />
+                    <DeleteModal
+                        title="Delete task"
+                        description="Are you sure you want to delete?"
+                        isOpen={isOpenDelModal}
+                        setIsOpen={setIsOpenDelModal}
+                        setIsDelete={setIsDelete}
                     />
                 </>
             ) : (
