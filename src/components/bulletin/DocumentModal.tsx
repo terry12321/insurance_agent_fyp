@@ -4,45 +4,9 @@ import { File as TablerFile, X } from "tabler-icons-react";
 import { Upload, message } from "antd";
 import type { UploadFile } from "antd/es/upload/interface";
 import { createClient } from "@supabase/supabase-js";
-import { apiKey, UserFileUrl } from "src/utils/supabase";
+import { apiKey, supabase, UserFileUrlType } from "src/utils/supabase";
 import { BEinstance } from "src/utils/axios";
-
-const mediaUploader = async (
-    files: UploadFile[],
-    getFilesCallback: () => Promise<void>
-) => {
-    const supabase = createClient(
-        "https://zqjnaztqbngpozcvewoi.supabase.co",
-        `${apiKey}`
-    );
-    const promiseBody: Promise<UserFileUrl | undefined>[] = files.map(
-        async (file) => {
-            if (file.originFileObj) {
-                const body = await supabase.storage
-                    .from("files")
-                    .upload(`public/${file.name}`, file.originFileObj);
-                if (body.data && body.data !== undefined) {
-                    const url = await supabase.storage
-                        .from("files")
-                        .getPublicUrl(body.data.path);
-                    return { path: url.data.publicUrl };
-                } else {
-                    return undefined;
-                }
-            }
-        }
-    );
-    try {
-        const data = await Promise.all(promiseBody);
-        const isDataUndefined = data.some((val) => val === undefined);
-        if (!isDataUndefined) {
-            await BEinstance.post("/users/upload-file", data);
-            getFilesCallback();
-        }
-    } catch (error) {
-        console.error(error);
-    }
-};
+import toast from "react-hot-toast";
 
 export const DocumentModal = ({
     isOpen,
@@ -51,6 +15,7 @@ export const DocumentModal = ({
 }: DocumentModalProps) => {
     const { Dragger } = Upload;
     const [media, setMedia] = useState<UploadFile[]>([]);
+    const [name, setName] = useState("");
     const props = {
         name: "file",
         beforeUpload: (file: UploadFile) => {
@@ -61,6 +26,41 @@ export const DocumentModal = ({
     function closeModal() {
         setIsOpen(false);
     }
+    const mediaUploader = async (
+        files: UploadFile[],
+        getFilesCallback: () => Promise<void>
+    ) => {
+        const toastId = toast.loading("Adding file");
+        const promiseBody: Promise<UserFileUrlType | undefined>[] = files.map(
+            async (file) => {
+                if (file.originFileObj) {
+                    const body = await supabase.storage
+                        .from("files")
+                        .upload(`public/${file.name}`, file.originFileObj);
+                    if (body.data && body.data !== undefined) {
+                        const url = await supabase.storage
+                            .from("files")
+                            .getPublicUrl(body.data.path);
+                        return { path: url.data.publicUrl, name: name };
+                    } else {
+                        return undefined;
+                    }
+                }
+            }
+        );
+        try {
+            const data = await Promise.all(promiseBody);
+            const isDataUndefined = data.some((val) => val === undefined);
+            if (!isDataUndefined) {
+                await BEinstance.post("/users/upload-file", data);
+                getFilesCallback();
+                closeModal();
+                toast.dismiss(toastId);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
     return (
         <>
             <Transition appear show={isOpen} as={Fragment}>
@@ -106,7 +106,12 @@ export const DocumentModal = ({
                                     </Dialog.Title>
                                     <div className="flex flex-col mt-4 text-black text-lg">
                                         <label>Name</label>
-                                        <input className="border border-[#BEBEBF] rounded-md bg-white outline-none px-2" />
+                                        <input
+                                            onChange={(e) => {
+                                                setName(e.target.value);
+                                            }}
+                                            className="border border-[#BEBEBF] rounded-md bg-white outline-none px-2"
+                                        />
                                     </div>
 
                                     {/* <div className="flex flex-col mt-4 text-black text-lg">

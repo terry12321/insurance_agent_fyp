@@ -5,14 +5,10 @@ export const supabase = createClient(
     "https://zqjnaztqbngpozcvewoi.supabase.co",
     `${apiKey}`
 );
-export interface UserFileUrl {
+export interface UserFileUrlType {
+    id?: number;
     path: string;
-}
-
-export interface UserFile {
-    id: number;
-    userId: number;
-    filePath: string;
+    name?: string;
 }
 
 export const getFiles = async (client: SupabaseClient<any, "public", any>) => {

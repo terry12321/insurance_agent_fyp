@@ -1,7 +1,7 @@
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useCallback, useEffect, useState } from "react";
 import { DocumentModal } from "./DocumentModal";
-import { supabase, UserFile, UserFileUrl } from "src/utils/supabase";
+import { supabase, UserFileUrlType } from "src/utils/supabase";
 import { BEinstance } from "src/utils/axios";
 import Image from "next/image";
 import { DotsVertical, Trash } from "tabler-icons-react";
@@ -32,15 +32,16 @@ const downloadFn = async (url: string) => {
 
 export const DocumentPage = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [name, setName] = useState("");
-    const [files, setFiles] = useState<UserFileUrl[]>([]);
+    const [files, setFiles] = useState<UserFileUrlType[]>([]);
     const [hoverIcon, setHoverIcon] = useState(-1);
     const getFilesCallback = useCallback(async () => {
         const data = await BEinstance.get("/users/get-files").then(
             async (files) => {
-                return files.data.map((file: UserFile) => {
-                    const returnFile: UserFileUrl = {
-                        path: file.filePath,
+                return files.data.map((file: UserFileUrlType) => {
+                    const returnFile: UserFileUrlType = {
+                        id: file.id,
+                        path: file.path,
+                        name: file.name,
                     };
                     return returnFile;
                 });
@@ -48,6 +49,28 @@ export const DocumentPage = () => {
         );
         setFiles(data);
     }, []);
+
+    const deleteFile = async (file: UserFileUrlType) => {
+        const toastId = toast.loading("Deleting file");
+        await BEinstance.post(`/users/delete-file/${file.id}`).then(
+            async () => {
+                const urlSplit = file.path.split("/");
+                const path = `${urlSplit[urlSplit.length - 2]}/${
+                    urlSplit[urlSplit.length - 1]
+                }`;
+                const { data, error } = await supabase.storage
+                    .from("files")
+                    .remove([`${path}`]);
+                if (data && data.length > 0) {
+                    getFilesCallback();
+                    toast.dismiss(toastId);
+                }
+                if (error) {
+                    console.log(error);
+                }
+            }
+        );
+    };
 
     useEffect(() => {
         getFilesCallback();
@@ -59,7 +82,6 @@ export const DocumentPage = () => {
                 <div className="flex gap-4 items-center w-2/4">
                     <div className="flex-1 relative">
                         <input
-                            onChange={(e) => setName(e.target.value)}
                             placeholder="search"
                             className="pl-4 pr-9 w-full relative rounded-lg outline-none bg-white text-black border-2 border-[#BEBEBE] py-1"
                         />
@@ -98,7 +120,9 @@ export const DocumentPage = () => {
                                 >
                                     <button
                                         onClick={() => {
-                                            console.log("trash clicked");
+                                            if (file.id) {
+                                                deleteFile(file);
+                                            }
                                         }}
                                     >
                                         <Trash size={20} />
@@ -141,10 +165,15 @@ export const DocumentPage = () => {
                                         priority={true}
                                         src={getExtension(file.path)}
                                         alt="pdf image"
-                                        width={200}
-                                        height={200}
+                                        width={150}
+                                        height={150}
                                     />
                                 </a>
+                                {file.name && file.name.length > 0 && (
+                                    <span className="text-black text-center">
+                                        {file.name}
+                                    </span>
+                                )}
                             </div>
                         );
                     })}
