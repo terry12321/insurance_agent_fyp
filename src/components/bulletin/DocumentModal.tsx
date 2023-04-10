@@ -3,8 +3,7 @@ import { Dispatch, Fragment, SetStateAction, useState } from "react";
 import { File as TablerFile, X } from "tabler-icons-react";
 import { Upload, message } from "antd";
 import type { UploadFile } from "antd/es/upload/interface";
-import { createClient } from "@supabase/supabase-js";
-import { apiKey, supabase, UserFileUrlType } from "src/utils/supabase";
+import { supabase, UserFileUrlType } from "src/utils/supabase";
 import { BEinstance } from "src/utils/axios";
 import toast from "react-hot-toast";
 

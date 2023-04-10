@@ -16,6 +16,7 @@ export const BulletinModal = ({
         addTask();
         setIsOpen(false);
     }
+
     return (
         <>
             <Transition appear show={isOpen} as={Fragment}>

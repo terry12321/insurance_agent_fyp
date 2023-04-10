@@ -5,6 +5,7 @@ import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import { BulletinModal } from "src/components/bulletin/BulletinModal";
 import { DocumentPage } from "src/components/bulletin/Document";
 import { StrictDroppable } from "src/components/bulletin/StrictDroppable";
+import { BEinstance } from "src/utils/axios";
 import { DotsVertical, Plus } from "tabler-icons-react";
 
 interface Sticker {
@@ -14,7 +15,7 @@ interface Sticker {
 interface Card {
     id: string;
     title: string;
-    stickers: Sticker[];
+    notes: Sticker[];
     color: string;
     btnColor: string;
 }
@@ -24,7 +25,7 @@ export default function Forum() {
         {
             title: "To Do",
             id: "card1",
-            stickers: [
+            notes: [
                 {
                     date: "Wednesday, 22th March 2023",
                     content: "Meet Titus Low at Yishun for ketchup",
@@ -45,7 +46,7 @@ export default function Forum() {
         {
             title: "In Progress",
             id: "card2",
-            stickers: [
+            notes: [
                 {
                     date: "Friday, 17th March 2023",
                     content: "Zile's TCM Claim",
@@ -61,7 +62,7 @@ export default function Forum() {
         {
             title: "Completed",
             id: "card3",
-            stickers: [
+            notes: [
                 {
                     date: "Wednesday, 8th March 2023",
                     content: "Babysit Moonbear",
@@ -79,7 +80,7 @@ export default function Forum() {
             btnColor: "bg-[#AFCAA4]",
         },
     ];
-    const [items, setItems] = useState<Card[]>(cards);
+    const [items, setItems] = useState<Card[]>([]);
     const [isOpen, setIsOpen] = useState(false);
     const [date, setDate] = useState<Dayjs | null>(null);
     const [content, setContent] = useState("");
@@ -96,17 +97,18 @@ export default function Forum() {
             const day = date.format("DD");
             const year = date.format("YYYY");
             const finalDate = `${weekday}, ${day}th ${month} ${year}`;
-            const sticker = {
+            const note = {
                 date: finalDate,
                 content: content,
             };
             const finalItems = items;
             const item = finalItems.find((val) => {
-                return val.id === cardId;
+                return val.id.toString() === cardId;
             });
             if (item) {
-                item.stickers.push(sticker);
+                item.notes.push(note);
             }
+            console.log(finalItems);
             setItems(finalItems);
             setDate(null);
         }
@@ -127,21 +129,29 @@ export default function Forum() {
 
         let dragItem;
         const sourceCard = finalItems.find((value) => {
-            return value.id === source.droppableId;
+            return value.id.toString() === source.droppableId;
         });
         const destinationCard = finalItems.find((value) => {
-            return value.id === destination.droppableId;
+            return value.id.toString() === destination.droppableId;
         });
         if (sourceCard) {
-            dragItem = sourceCard.stickers[source.index];
-            sourceCard.stickers.splice(source.index, 1);
+            dragItem = sourceCard.notes[source.index];
+            sourceCard.notes.splice(source.index, 1);
         }
         if (destinationCard && dragItem) {
-            destinationCard.stickers.splice(destination.index, 0, dragItem);
+            destinationCard.notes.splice(destination.index, 0, dragItem);
         }
-
         setItems(finalItems);
     };
+
+    useEffect(() => {
+        const getAllItems = async () => {
+            await BEinstance.get("/task/get-all-task").then((value) => {
+                setItems(value.data);
+            });
+        };
+        getAllItems();
+    }, []);
     return (
         <div className="w-5/6 flex flex-col gap-10">
             <div className="flex gap-16 justify-end w-full text-black pl-4 py-4">
@@ -185,12 +195,12 @@ export default function Forum() {
                                                 <span className="text-2xl text-black font-medium">
                                                     {item.title}
                                                 </span>
-                                                {item.stickers.map(
-                                                    (item, stickerIdx) => (
+                                                {item.notes.map(
+                                                    (item, noteIdx) => (
                                                         <Draggable
-                                                            key={`drag${idx}stick${stickerIdx}`}
-                                                            draggableId={`drag${idx}stick${stickerIdx}`}
-                                                            index={stickerIdx}
+                                                            key={`drag${idx}note${noteIdx}`}
+                                                            draggableId={`drag${idx}note${noteIdx}`}
+                                                            index={noteIdx}
                                                         >
                                                             {(
                                                                 provided,
@@ -208,12 +218,20 @@ export default function Forum() {
                                                                             : ""
                                                                     }`}
                                                                 >
-                                                                    <span className="flex justify-between">
-                                                                        {
-                                                                            item.content
-                                                                        }
-                                                                        <DotsVertical />
-                                                                    </span>
+                                                                    <div className="flex justify-between">
+                                                                        <span className="w-11/12">
+                                                                            {
+                                                                                item.content
+                                                                            }
+                                                                        </span>
+                                                                        <span className="w-1/12 pt-1">
+                                                                            <DotsVertical
+                                                                                size={
+                                                                                    20
+                                                                                }
+                                                                            />
+                                                                        </span>
+                                                                    </div>
                                                                     <div></div>
                                                                     <div className="text-gray-400">
                                                                         {
