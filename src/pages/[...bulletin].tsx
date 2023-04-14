@@ -36,9 +36,58 @@ export default function Forum() {
     const [cardId, setCardId] = useState("");
     const router = useRouter();
 
+    const cards = [
+        {
+            id: 1,
+            cardId: "card1",
+            title: "To Do",
+            color: "bg-[#CDDFE0]",
+            btnColor: "bg-[#B5CACB]",
+        },
+        {
+            id: 2,
+            cardId: "card2",
+            title: "In Progress",
+            color: "bg-[#D9D8FF]",
+            btnColor: "bg-[#C0BFE7]",
+        },
+        {
+            id: 3,
+            cardId: "card3",
+            title: "Completed",
+            color: "bg-[#D0E7C6]",
+            btnColor: "bg-[#AFCAA4]",
+        },
+    ];
+
     function openModal() {
         setIsOpen(true);
     }
+    const getCardColor = (id: number) => {
+        let color = "";
+        switch (id) {
+            case 1:
+                color = "bg-[#CDDFE0]";
+                break;
+            case 2:
+                color = "bg-[#D9D8FF]";
+                break;
+            case 3:
+                color = "bg-[#D0E7C6]";
+                break;
+        }
+        return color;
+    };
+    const getCardBtncolor = (id: number) => {
+        switch (id) {
+            case 1:
+                return "bg-[#B5CACB]";
+            case 2:
+                return "bg-[#C0BFE7]";
+            case 3:
+                return "bg-[#AFCAA4]";
+        }
+    };
     const getAllItems = async () => {
         await BEinstance.get("/task/get-all-task").then((value) => {
             setItems(value.data);
@@ -154,7 +203,9 @@ export default function Forum() {
                                             <div
                                                 {...provided.droppableProps}
                                                 ref={provided.innerRef}
-                                                className={`flex flex-col gap-4 ${item.color} p-4 rounded-lg`}
+                                                className={`flex flex-col gap-4 ${getCardColor(
+                                                    +item.id
+                                                )} p-4 rounded-lg`}
                                             >
                                                 <span className="text-2xl text-black font-medium">
                                                     {item.title}
@@ -245,7 +296,9 @@ export default function Forum() {
                                                 {provided.placeholder}
 
                                                 <button
-                                                    className={`flex text-black ${item.btnColor} w-2/6 2xl:w-1/6 rounded-lg items-center justify-center`}
+                                                    className={`flex text-black ${getCardBtncolor(
+                                                        +item.id
+                                                    )} w-2/6 2xl:w-1/6 rounded-lg items-center justify-center`}
                                                     onClick={() => {
                                                         openModal();
                                                         setCardId(`${item.id}`);
