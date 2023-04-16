@@ -191,7 +191,7 @@ export default function Forum() {
             </div>
             {router.asPath === "/bulletin" ? (
                 <>
-                    <span className="text-black text-3xl font-medium">
+                    <span className="text-black text-4xl font-medium">
                         Tasks on hand
                     </span>
                     <div className="flex w-full gap-8">
