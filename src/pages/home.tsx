@@ -1,19 +1,26 @@
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useEffect } from "react";
 import { UserStatus } from "src/interfaces/UserState";
 import { Table } from "antd";
 import { useUserStore } from "../stores/UserStore";
 import { Trash } from "tabler-icons-react";
-import { AddClientModal } from "src/components/home/AddClientModal";
+import {
+    AddClientModal,
+    ClientFormProps,
+} from "src/components/home/AddClientModal";
 import { BEinstance } from "src/utils/axios";
 import { Occupation } from "src/components/home/interface/ClientInterface";
+import { toast } from "react-hot-toast";
 
 export default function About() {
     const { userStatus } = useUserStore((state) => state.user);
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
     const [occupation, setOccupation] = useState<Array<Occupation>>([]);
-    const [selectedOccupation, setSelectedOccupation] = useState("");
+    const [selectedOccupation, setSelectedOccupation] = useState<string>("");
+    // const [clientData, setClientData] = useState<ClientFormProps | null>(null);
+    const [imageUrl, setImageUrl] = useState<string>("");
+
     const router = useRouter();
 
     const columns = [
@@ -33,9 +40,7 @@ export default function About() {
         data.push({
             key: i,
             name: (
-                <div
-                    className="flex items-center gap-4 text-xl 2xl:text-2xl"
-                >
+                <div className="flex items-center gap-4 text-xl 2xl:text-2xl">
                     {i === 3 ? (
                         <>
                             <img
@@ -81,6 +86,31 @@ export default function About() {
         });
     };
 
+    const uploadClient = useCallback(async (clientData: ClientFormProps) => {
+        if (clientData !== null) {
+            const body = {
+                profileImage: imageUrl,
+                name: clientData.name,
+                NRIC: clientData.NRIC,
+                contactNo: clientData.contact,
+                email: clientData.email,
+                address: clientData.address,
+                occupation: selectedOccupation,
+            };
+            await BEinstance.post("/client", body)
+                .then((value) => {
+                    if (value.data) {
+                        toast.success("Successfully added client!");
+                        setSelectedOccupation("");
+                        setImageUrl("");
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    }, []);
+
     /** UseEffect **/
     useEffect(() => {
         if (userStatus === UserStatus.LOGGED_OUT) {
@@ -114,7 +144,10 @@ export default function About() {
                 setIsOpen={setIsOpenModal}
                 isOpen={isOpenModal}
                 occupation={occupation}
+                selectedOccupation={selectedOccupation}
                 setSelectedOccupation={setSelectedOccupation}
+                uploadClient={uploadClient}
+                setImageUrl={setImageUrl}
             />
         </div>
     );
