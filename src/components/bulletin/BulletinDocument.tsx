@@ -31,7 +31,7 @@ const downloadFn = async (url: string) => {
     }
 };
 
-export const DocumentPage = () => {
+export const BulletinDocumentPage = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [files, setFiles] = useState<UserFileUrlType[]>([]);
     const [hoverIcon, setHoverIcon] = useState(-1);

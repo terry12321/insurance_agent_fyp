@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import React, { useCallback, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { useEffect } from "react";
 import { UserStatus } from "src/interfaces/UserState";
 import { Table } from "antd";
@@ -8,18 +8,30 @@ import { Trash } from "tabler-icons-react";
 import {
     AddClientModal,
     ClientFormProps,
+    handleDelete,
 } from "src/components/home/AddClientModal";
 import { BEinstance } from "src/utils/axios";
-import { Occupation } from "src/components/home/interface/ClientInterface";
+import {
+    ClientInterface,
+    Occupation,
+} from "src/components/home/interface/ClientInterface";
 import { toast } from "react-hot-toast";
 
-export default function About() {
+export const getOccuption = async (
+    setOccupation: React.Dispatch<React.SetStateAction<Occupation[]>>
+) => {
+    await BEinstance.get("/client/get-all-occupation").then((value) => {
+        if (value.data) {
+            setOccupation(value.data);
+        }
+    });
+};
+
+export default function Home() {
     const { userStatus } = useUserStore((state) => state.user);
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
     const [occupation, setOccupation] = useState<Array<Occupation>>([]);
-    const [selectedOccupation, setSelectedOccupation] = useState<string>("");
-    // const [clientData, setClientData] = useState<ClientFormProps | null>(null);
-    const [imageUrl, setImageUrl] = useState<string>("");
+    const [data, setData] = useState([]);
 
     const router = useRouter();
 
@@ -34,75 +46,87 @@ export default function About() {
             width: "100px",
         },
     ];
-
-    const data = [];
-    for (let i = 0; i < 10; i++) {
-        data.push({
-            key: i,
-            name: (
-                <div className="flex items-center gap-4 text-xl 2xl:text-2xl">
-                    {i === 3 ? (
-                        <>
-                            <img
-                                width={70}
-                                height={70}
-                                className="rounded-full"
-                                src="/images/default-profile.png"
-                            />{" "}
-                            Edward King {i}
-                        </>
-                    ) : (
-                        <>
-                            <img
-                                width={70}
-                                height={70}
-                                className="rounded-full"
-                                src="https://zqjnaztqbngpozcvewoi.supabase.co/storage/v1/object/public/files/userpicture/image%2010.png?t=2023-04-14T09%3A57%3A54.343Z"
-                            />{" "}
-                            Edward King {i}
-                        </>
-                    )}
-                </div>
-            ),
-            age: (
-                <button
-                    className="flex gap-2 text-[#817D7D]"
-                    onClick={() => {
-                        console.log(i);
-                    }}
-                >
-                    <Trash />
-                    Delete
-                </button>
-            ),
-        });
-    }
-
-    const getOccuption = async () => {
-        await BEinstance.get("/client/get-all-occupation").then((value) => {
+    const deleteClient = async (id: number, profileImage: string) => {
+        await BEinstance.delete(`/client/${id}`).then((value) => {
             if (value.data) {
-                setOccupation(value.data);
+                if (profileImage !== "") {
+                    handleDelete(profileImage);
+                }
+                getAllClient();
+                toast.success("Successfully deleted client!");
             }
         });
     };
 
+    const getAllClient = useCallback(async () => {
+        await BEinstance.get("/client").then((value) => {
+            if (value.data && value.data.length > 0) {
+                const dataArray = value.data.map(
+                    (data: ClientInterface, i: number) => {
+                        return {
+                            key: data.id,
+                            name: (
+                                <div>
+                                    {
+                                        <a
+                                            href={`/home/client/${data.id}`}
+                                            className="flex items-center gap-4 text-xl 2xl:text-2xl"
+                                        >
+                                            <img
+                                                width={70}
+                                                height={70}
+                                                className="rounded-full"
+                                                src={
+                                                    data.profileImage === ""
+                                                        ? "/images/default-profile.png"
+                                                        : data.profileImage
+                                                }
+                                            />{" "}
+                                            {data.name}
+                                        </a>
+                                    }
+                                </div>
+                            ),
+                            age: (
+                                <button
+                                    className="flex gap-2 text-[#817D7D]"
+                                    onClick={() => {
+                                        deleteClient(
+                                            data.id,
+                                            data.profileImage
+                                        );
+                                    }}
+                                >
+                                    <Trash />
+                                    Delete
+                                </button>
+                            ),
+                        };
+                    }
+                );
+                setData(dataArray);
+            } else {
+                setData([]);
+            }
+        });
+    }, []);
+
     const uploadClient = useCallback(async (clientData: ClientFormProps) => {
         if (clientData !== null) {
             const body = {
-                profileImage: imageUrl,
+                profileImage: clientData.profileImage,
                 name: clientData.name,
                 NRIC: clientData.NRIC,
-                contactNo: clientData.contact,
+                contactNo: clientData.contactNo,
                 email: clientData.email,
                 address: clientData.address,
-                occupation: selectedOccupation,
+                occupation: clientData.occupation,
             };
             await BEinstance.post("/client", body)
                 .then((value) => {
                     if (value.data) {
                         toast.success("Successfully added client!");
-                        setSelectedOccupation("");
-                        setImageUrl("");
+                        getAllClient();
                     }
                 })
                 .catch((err) => {
@@ -116,7 +140,8 @@ export default function About() {
         if (userStatus === UserStatus.LOGGED_OUT) {
             router.push("/");
         }
-        getOccuption();
+        getOccuption(setOccupation);
+        getAllClient();
     }, []);
 
     return (
@@ -125,7 +150,7 @@ export default function About() {
                 <span className="font-medium text-4xl">Clients</span>
                 <button
                     onClick={() => setIsOpenModal(true)}
-                    className="px-4 py-2 rounded-xl bg-[#424760] text-white"
+                    className="px-10 py-2 rounded-xl bg-[#424760] text-white"
                 >
                     Add client
                 </button>
@@ -144,10 +169,7 @@ export default function About() {
                 setIsOpen={setIsOpenModal}
                 isOpen={isOpenModal}
                 occupation={occupation}
-                selectedOccupation={selectedOccupation}
-                setSelectedOccupation={setSelectedOccupation}
                 uploadClient={uploadClient}
-                setImageUrl={setImageUrl}
             />
         </div>
     );

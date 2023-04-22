@@ -7,7 +7,7 @@ export const ClientSchema = yup.object({
         .matches(/([A-Z]){1}\d{7}([A-Z]){1}$/g, "Invalid NRIC!")
         .max(9)
         .required("NRIC is required"),
-    contact: yup
+    contactNo: yup
         .string()
         .matches(/(8|9)(\d{7}|\d{3} \d{4})/g, "Invalid contact number!")
         .min(8)
@@ -18,4 +18,5 @@ export const ClientSchema = yup.object({
         .string()
         .typeError("Please an address!")
         .required("Address is required"),
+    occupation: yup.string().required("Occupation is required"),
 });

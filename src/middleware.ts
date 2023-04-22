@@ -12,5 +12,11 @@ export function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-    matcher: ["/home", "/bulletin", "/bulletin/document"],
+    matcher: [
+        "/bulletin",
+        "/bulletin/document",
+        "/home",
+        "/home/clientpolicy/",
+        "/home/client/",
+    ],
 };

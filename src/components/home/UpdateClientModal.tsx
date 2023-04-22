@@ -1,103 +1,55 @@
-import { Dialog, Transition } from "@headlessui/react";
 import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
-import { Trash, Upload as UploadIcon, X } from "tabler-icons-react";
-import { Select, UploadFile, UploadProps } from "antd";
 import { Occupation } from "./interface/ClientInterface";
-import { Upload, Button } from "antd";
-import { supabase } from "src/utils/supabase";
-import { Spin } from "antd";
-import { ClientSchema } from "src/schemas/ClientSchema";
+import { Dialog, Transition } from "@headlessui/react";
+import { Select } from "antd";
+import { ClientFormProps } from "./AddClientModal";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { ClientSchema } from "src/schemas/ClientSchema";
+import { X } from "tabler-icons-react";
+import { BEinstance } from "src/utils/axios";
+
 const Option = Select.Option;
 
-export const handleDelete = async (
-    url: string,
-    setShowSpin?: Dispatch<SetStateAction<boolean>>,
-    setFile?: Dispatch<SetStateAction<ImageUpload | null>>
-) => {
-    setShowSpin && setShowSpin(true);
-    const urlSplit = url.split("/");
-    const path = `${urlSplit[urlSplit.length - 2]}/${
-        urlSplit[urlSplit.length - 1]
-    }`;
-    const { data, error } = await supabase.storage
-        .from("files")
-        .remove([`${path}`]);
-    if (data) {
-        setFile && setFile(null);
-        setShowSpin && setShowSpin(false);
-        return { data, error };
-    }
-};
-
-export const AddClientModal = ({
+export const UpdateClientModal = ({
     isOpen,
     setIsOpen,
     occupation,
-    uploadClient,
-}: AddClientModalProps) => {
-    const [file, setFile] = useState<ImageUpload | null>(null);
-    const [fileList, setFileList] = useState<UploadFile[]>([]);
-    const [showSpin, setShowSpin] = useState(false);
-
+    clientDetails,
+    id,
+    handleUpdate,
+    getClientDetails,
+}: UpdateClientModalProps) => {
     const {
         register,
         setValue,
         handleSubmit,
+        getValues,
         reset,
-        formState: { errors, isValid },
+        formState: { errors },
     } = useForm<ClientFormProps>({
         mode: "onBlur",
-        defaultValues: {
-            name: "",
-            NRIC: "",
-            contactNo: "",
-            email: "",
-            address: "",
-            profileImage: "",
-        },
+        defaultValues: clientDetails,
         resolver: yupResolver(ClientSchema),
     });
 
     async function closeModal() {
         setIsOpen(false);
-        setFile(null);
-        reset();
+        getClientDetails();
+        await BEinstance.get(`/client/${id}`).then((result) => {
+            if (result.data) {
+                reset(result.data);
+            }
+        });
     }
 
-    const handleOnSubmit = (data: ClientFormProps) => {
-        if (!data.profileImage) {
-            data.profileImage = "";
-        }
-        uploadClient(data);
-        closeModal();
-    };
-
-    const handleCustomUpload = async (RcCustomRequestOptions: any) => {
-        setShowSpin(true);
-        if (RcCustomRequestOptions.file) {
-            const file = RcCustomRequestOptions.file;
-            const body = await supabase.storage
-                .from("files")
-                .upload(`userpicture/${file.name}`, file);
-            if (body.data && body.data !== undefined) {
-                const url = await supabase.storage
-                    .from("files")
-                    .getPublicUrl(body.data.path);
-                setValue("profileImage", url.data.publicUrl, {
-                    shouldValidate: true,
-                });
-                setFile({ url: url.data.publicUrl, fileName: file.name });
-                setShowSpin(false);
+    const handleOnSubmit = async (data: ClientFormProps) => {
+        await BEinstance.put(`/client/${id}`, data).then((result) => {
+            if (result.data) {
+                handleUpdate();
+                setIsOpen(false);
             }
-        }
-    };
-    const handleChange: UploadProps["onChange"] = async ({
-        file,
-        fileList,
-    }) => {
-        setFileList(fileList);
+        });
     };
 
     return (
@@ -135,7 +87,7 @@ export const AddClientModal = ({
                                     >
                                         <div className="flex justify-between">
                                             <span className="font-semibold text-black text-2xl mb-4">
-                                                Add Client
+                                                Update Client
                                             </span>
                                             <X
                                                 className="h-6 cursor-pointer text-black"
@@ -143,69 +95,6 @@ export const AddClientModal = ({
                                             />
                                         </div>
                                         <div className="flex flex-col w-full h-full gap-4 text-black">
-                                            <div className="flex flex-col">
-                                                <label className="text-xl">
-                                                    Profile Picture
-                                                </label>
-                                                <Upload
-                                                    disabled={file !== null}
-                                                    customRequest={
-                                                        handleCustomUpload
-                                                    }
-                                                    {...{
-                                                        name: "profileImage",
-                                                    }}
-                                                    fileList={fileList}
-                                                    maxCount={1}
-                                                    onChange={handleChange}
-                                                    showUploadList={false}
-                                                >
-                                                    <Button
-                                                        disabled={file !== null}
-                                                        className="flex gap-2 top-0 left-0"
-                                                    >
-                                                        <UploadIcon size={20} />{" "}
-                                                        Click to Upload
-                                                    </Button>
-                                                </Upload>
-                                            </div>
-                                            <div>
-                                                {showSpin && <Spin />}
-                                                {!showSpin && file && (
-                                                    <div className="flex w-full border items-center p-2 rounded-lg justify-between">
-                                                        <div className="flex gap-2 items-center">
-                                                            <img
-                                                                width={50}
-                                                                height={50}
-                                                                className="rounded-full"
-                                                                src={file.url}
-                                                            />
-                                                            <a
-                                                                target={
-                                                                    "_blank"
-                                                                }
-                                                                rel="noreferrer"
-                                                                href={file.url}
-                                                                className="hover:text-blue-400"
-                                                            >
-                                                                {file.fileName}
-                                                            </a>
-                                                        </div>
-                                                        <button
-                                                            onClick={() =>
-                                                                handleDelete(
-                                                                    file.url,
-                                                                    setShowSpin,
-                                                                    setFile
-                                                                )
-                                                            }
-                                                        >
-                                                            <Trash size={20} />
-                                                        </button>
-                                                    </div>
-                                                )}
-                                            </div>
-
                                             <div className="flex flex-col">
                                                 {errors.name && (
                                                     <div className="text-red-500">
@@ -219,19 +108,17 @@ export const AddClientModal = ({
                                                     </span>
                                                 </label>
                                                 <input
-                                                    {...(register("name"),
-                                                    {
-                                                        onChange(e) {
-                                                            setValue(
-                                                                "name",
-                                                                e.target.value,
-                                                                {
-                                                                    shouldValidate:
-                                                                        true,
-                                                                }
-                                                            );
-                                                        },
-                                                    })}
+                                                    {...register("name")}
+                                                    onChange={(e) =>
+                                                        setValue(
+                                                            "name",
+                                                            e.target.value,
+                                                            {
+                                                                shouldValidate:
+                                                                    true,
+                                                            }
+                                                        )
+                                                    }
                                                     className="bg-white rounded-md border border-[#BEBEBF] outline-none p-2"
                                                 />
                                             </div>
@@ -248,26 +135,27 @@ export const AddClientModal = ({
                                                     </span>
                                                 </label>
                                                 <input
-                                                    {...(register("NRIC"),
-                                                    {
-                                                        onChange(e) {
-                                                            setValue(
-                                                                "NRIC",
-                                                                e.target.value,
-                                                                {
-                                                                    shouldValidate:
-                                                                        true,
-                                                                }
-                                                            );
-                                                        },
-                                                    })}
+                                                    {...register("NRIC")}
+                                                    onChange={(e) => {
+                                                        setValue(
+                                                            "NRIC",
+                                                            e.target.value,
+                                                            {
+                                                                shouldValidate:
+                                                                    true,
+                                                            }
+                                                        );
+                                                    }}
                                                     className="bg-white rounded-md border border-[#BEBEBF] outline-none p-2"
                                                 />
                                             </div>
                                             <div className="flex flex-col">
                                                 {errors.contactNo && (
                                                     <div className="text-red-500">
-                                                        {errors.contactNo.message}
+                                                        {
+                                                            errors.contactNo
+                                                                .message
+                                                        }
                                                     </div>
                                                 )}
                                                 <label className="text-xl">
@@ -277,19 +165,17 @@ export const AddClientModal = ({
                                                     </span>
                                                 </label>
                                                 <input
-                                                    {...(register("contactNo"),
-                                                    {
-                                                        onChange(e) {
-                                                            setValue(
-                                                                "contactNo",
-                                                                e.target.value,
-                                                                {
-                                                                    shouldValidate:
-                                                                        true,
-                                                                }
-                                                            );
-                                                        },
-                                                    })}
+                                                    {...register("contactNo")}
+                                                    onChange={(e) => {
+                                                        setValue(
+                                                            "contactNo",
+                                                            e.target.value,
+                                                            {
+                                                                shouldValidate:
+                                                                    true,
+                                                            }
+                                                        );
+                                                    }}
                                                     className="bg-white rounded-md border border-[#BEBEBF] outline-none p-2"
                                                 />
                                             </div>
@@ -303,19 +189,17 @@ export const AddClientModal = ({
                                                     Email
                                                 </label>
                                                 <input
-                                                    {...(register("email"),
-                                                    {
-                                                        onChange(e) {
-                                                            setValue(
-                                                                "email",
-                                                                e.target.value,
-                                                                {
-                                                                    shouldValidate:
-                                                                        true,
-                                                                }
-                                                            );
-                                                        },
-                                                    })}
+                                                    {...register("email")}
+                                                    onChange={(e) => {
+                                                        setValue(
+                                                            "email",
+                                                            e.target.value,
+                                                            {
+                                                                shouldValidate:
+                                                                    true,
+                                                            }
+                                                        );
+                                                    }}
                                                     className="bg-white rounded-md border border-[#BEBEBF] outline-none p-2"
                                                 />
                                             </div>
@@ -332,19 +216,17 @@ export const AddClientModal = ({
                                                     </span>
                                                 </label>
                                                 <input
-                                                    {...(register("address"),
-                                                    {
-                                                        onChange(e) {
-                                                            setValue(
-                                                                "address",
-                                                                e.target.value,
-                                                                {
-                                                                    shouldValidate:
-                                                                        true,
-                                                                }
-                                                            );
-                                                        },
-                                                    })}
+                                                    {...register("address")}
+                                                    onChange={(e) => {
+                                                        setValue(
+                                                            "address",
+                                                            e.target.value,
+                                                            {
+                                                                shouldValidate:
+                                                                    true,
+                                                            }
+                                                        );
+                                                    }}
                                                     className="bg-white rounded-md border border-[#BEBEBF] outline-none p-2"
                                                 />
                                             </div>
@@ -360,6 +242,9 @@ export const AddClientModal = ({
                                                     style={{ width: 200 }}
                                                     placeholder="Select a person"
                                                     optionFilterProp="children"
+                                                    defaultValue={getValues(
+                                                        "occupation"
+                                                    )}
                                                     onChange={(value) => {
                                                         setValue(
                                                             "occupation",
@@ -413,7 +298,7 @@ export const AddClientModal = ({
                                             <div className="flex justify-end">
                                                 <button
                                                     type="submit"
-                                                    disabled={!isValid}
+                                                    // disabled={!isValid}
                                                     className="inline-flex justify-center rounded-md border border-transparent bg-black px-8 py-2 text-sm font-medium text-white disabled:bg-gray-500 disabled:hover:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                                 >
                                                     Add Task
@@ -431,24 +316,12 @@ export const AddClientModal = ({
     );
 };
 
-interface AddClientModalProps {
+interface UpdateClientModalProps {
     isOpen: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
     occupation: Array<Occupation>;
-    uploadClient: (clientData: ClientFormProps) => void;
-}
-
-export interface ClientFormProps {
-    name: string;
-    NRIC: string;
-    contactNo: string;
-    email: string;
-    address: string;
-    occupation: string;
-    profileImage: string;
-}
-
-export interface ImageUpload {
-    url: string;
-    fileName: string;
+    clientDetails: ClientFormProps;
+    id: string;
+    handleUpdate: () => void;
+    getClientDetails: () => Promise<void>;
 }
