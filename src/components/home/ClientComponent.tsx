@@ -33,7 +33,7 @@ export default function ClientCommponent() {
         getClientDetails();
         getOccuption(setOccupation);
     }, []);
-    
+
     if (clientDetails !== null) {
         return (
             <>

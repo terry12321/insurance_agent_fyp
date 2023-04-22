@@ -267,7 +267,10 @@ export const AddClientModal = ({
                                             <div className="flex flex-col">
                                                 {errors.contactNo && (
                                                     <div className="text-red-500">
-                                                        {errors.contactNo.message}
+                                                        {
+                                                            errors.contactNo
+                                                                .message
+                                                        }
                                                     </div>
                                                 )}
                                                 <label className="text-xl">
