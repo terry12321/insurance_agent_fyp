@@ -1,4 +1,4 @@
-import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, Fragment, SetStateAction } from "react";
 import { Occupation } from "./interface/ClientInterface";
 import { Dialog, Transition } from "@headlessui/react";
 import { Select } from "antd";
@@ -91,7 +91,7 @@ export const UpdateClientModal = ({
                                             </span>
                                             <X
                                                 className="h-6 cursor-pointer text-black"
-                                                onClick={() => setIsOpen(false)}
+                                                onClick={() => closeModal()}
                                             />
                                         </div>
                                         <div className="flex flex-col w-full h-full gap-4 text-black">
@@ -298,7 +298,6 @@ export const UpdateClientModal = ({
                                             <div className="flex justify-end">
                                                 <button
                                                     type="submit"
-                                                    // disabled={!isValid}
                                                     className="inline-flex justify-center rounded-md border border-transparent bg-black px-8 py-2 text-sm font-medium text-white disabled:bg-gray-500 disabled:hover:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                                 >
                                                     Add Task

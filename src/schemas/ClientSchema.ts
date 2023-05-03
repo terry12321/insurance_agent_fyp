@@ -1,7 +1,7 @@
 import * as yup from "yup";
 
 export const ClientSchema = yup.object({
-    name: yup.string().typeError("Please a name!").required("Name is required"),
+    name: yup.string().required("Name is required"),
     NRIC: yup
         .string()
         .matches(/([A-Z]){1}\d{7}([A-Z]){1}$/g, "Invalid NRIC!")
