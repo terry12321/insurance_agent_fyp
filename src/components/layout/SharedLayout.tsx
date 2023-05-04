@@ -42,7 +42,7 @@ const SharedLayout = ({ children }: { children: ReactNode }) => {
                         />
                     </span>
                 </div>
-                <div className="flex justify-center bg-white h-[88%] 2xl:h-[92%] py-40 text-black">
+                <div className="flex justify-center bg-white py-20 h-[88%] 2xl:h-[92%] 2xl:py-40 text-black">
                     <div className="w-4/12 2xl:w-3/12">{children}</div>
                 </div>
                 <Toaster
@@ -60,7 +60,9 @@ const SharedLayout = ({ children }: { children: ReactNode }) => {
         <>
             {/* Grid Column CSS Style */}
             <div className="text-lg">
-                {pathname !== "/" && pathname !== "/resetPassword" ? (
+                {pathname !== "/" &&
+                pathname !== "/resetPassword" &&
+                pathname !== "/signup" ? (
                     <AuthedComponent />
                 ) : (
                     <LoginComponent />

@@ -6,6 +6,7 @@ import {
     UserStatus,
 } from "../interfaces/UserState";
 import { BEinstance } from "../utils/axios";
+import { AxiosResponse } from "axios";
 
 export const useUserStore = create<UserState>()(
     persist(
@@ -32,7 +33,6 @@ export const useUserStore = create<UserState>()(
                         }
                     })
                     .catch((error) => {
-                        console.log(error);
                         return error;
                     });
             },

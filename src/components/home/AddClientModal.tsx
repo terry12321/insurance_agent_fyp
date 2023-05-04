@@ -419,7 +419,7 @@ export const AddClientModal = ({
                                                     disabled={!isValid}
                                                     className="inline-flex justify-center rounded-md border border-transparent bg-black px-8 py-2 text-sm font-medium text-white disabled:bg-gray-500 disabled:hover:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                                 >
-                                                    Add Task
+                                                    Add Client
                                                 </button>
                                             </div>
                                         </div>

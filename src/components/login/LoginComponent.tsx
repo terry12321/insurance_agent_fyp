@@ -3,6 +3,7 @@ import React, { FormEvent, useCallback, useState } from "react";
 import { useUserStore } from "src/stores/UserStore";
 import { toast } from "react-hot-toast";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
+import { isAxiosError } from "axios";
 
 const LoginComponent = () => {
     const [username, setUsername] = useState("");
@@ -13,17 +14,16 @@ const LoginComponent = () => {
     const handleClick = useCallback(
         (e: FormEvent<HTMLFormElement>) => {
             e.preventDefault();
-            login(username, password)
-                .then((response) => {
-                    if (response.data.accessToken) {
-                        router.push("/home");
-                    }
-                })
-                .catch((error) => {
-                    toast.error(
-                        "Incorrect username or password. Please try again!"
-                    );
-                });
+            login(username, password).then((response) => {
+                console.log(response);
+                if (response.data && response.data.accessToken) {
+                    router.push("/home");
+                } else if (isAxiosError(response)) {
+                    const error = response;
+                    if (error.response)
+                        toast.error(error.response.data.message);
+                }
+            });
         },
         [username, password]
     );
@@ -66,6 +66,12 @@ const LoginComponent = () => {
                             Sign In
                         </button>
                     </div>
+                    <span className="text-center text-[#575757]">
+                        New to FA-Guardix?{" "}
+                        <a href="/signup" className="text-blue-500">
+                            Join now
+                        </a>
+                    </span>
                 </form>
             </div>
         </div>

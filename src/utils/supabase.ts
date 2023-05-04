@@ -2,7 +2,7 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export const apiKey = process.env.NEXT_PUBLIC_API_KEY;
 export const supabase = createClient(
-    "https://zqjnaztqbngpozcvewoi.supabase.co",
+    "https://ivxonmjfqaxpzevtrzjm.supabase.co",
     `${apiKey}`
 );
 export interface UserFileUrlType {
