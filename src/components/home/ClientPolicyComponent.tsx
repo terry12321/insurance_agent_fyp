@@ -3,6 +3,7 @@ import { ClientPolicyModal } from "./clientPolicy/ClientPolicyModal";
 import { BEinstance } from "src/utils/axios";
 import { useRouter } from "next/router";
 import { ClientUpdatePolicyModal } from "./clientPolicy/UpdateClientPolicyModal";
+import { Edit, Trash } from "tabler-icons-react";
 
 export default function ClientPolicyComponent() {
     const headers = ["Name", "Premium", "Coverage", " "];
@@ -26,6 +27,16 @@ export default function ClientPolicyComponent() {
 
     const handleUpdate = () => {
         getClientPolicyDetails(clientId);
+    };
+
+    const deletePolicy = async (id: number | undefined) => {
+        if (id) {
+            await BEinstance.delete(`/client/policy/${id}`).then((value) => {
+                if (value.data) {
+                    handleUpdate();
+                }
+            });
+        }
     };
 
     /** USEEFFECT **/
@@ -80,16 +91,26 @@ export default function ClientPolicyComponent() {
                                     <td className="text-black text-left pl-4">
                                         ${policy.coverage.toLocaleString()}
                                     </td>
-                                    <td className="text-[#817D7D]  text-right pr-4">
-                                        <span
-                                            className=" cursor-pointer hover:text-blue-500"
-                                            onClick={() => {
-                                                setPolicyDetail(policy);
-                                                setIsPolicyModalOpen(true);
-                                            }}
-                                        >
-                                            Edit
-                                        </span>
+                                    <td className="text-[#817D7D] text-right pr-4">
+                                        <div className="flex justify-end gap-4">
+                                            <span
+                                                className=" cursor-pointer hover:text-blue-500"
+                                                onClick={() => {
+                                                    setPolicyDetail(policy);
+                                                    setIsPolicyModalOpen(true);
+                                                }}
+                                            >
+                                                <Edit size={20} />
+                                            </span>
+                                            <span
+                                                className=" cursor-pointer hover:text-blue-500"
+                                                onClick={() => {
+                                                    deletePolicy(policy.id);
+                                                }}
+                                            >
+                                                <Trash size={20} />
+                                            </span>
+                                        </div>
                                     </td>
                                 </tr>
                             );
