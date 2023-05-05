@@ -12,5 +12,19 @@ export interface UserFileUrlType {
 }
 
 export const getFiles = async (client: SupabaseClient<any, "public", any>) => {
-    return await client.storage.from("files").list("public/");
+    return await client.storage.from("files").list("userpicture/");
+};
+
+export const deleteAllTempFiles = async () => {
+    await supabase.storage
+        .from("files")
+        .list(`temppicture`)
+        .then(async (value) => {
+            if (value.data && value.data.length > 0) {
+                const filesToRemove = value.data.map(
+                    (x) => `temppicture/${x.name}`
+                );
+                await supabase.storage.from("files").remove(filesToRemove);
+            }
+        });
 };

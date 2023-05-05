@@ -15,7 +15,6 @@ const LoginComponent = () => {
         (e: FormEvent<HTMLFormElement>) => {
             e.preventDefault();
             login(username, password).then((response) => {
-                console.log(response);
                 if (response.data && response.data.accessToken) {
                     router.push("/home");
                 } else if (isAxiosError(response)) {

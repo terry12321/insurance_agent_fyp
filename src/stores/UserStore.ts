@@ -6,7 +6,7 @@ import {
     UserStatus,
 } from "../interfaces/UserState";
 import { BEinstance } from "../utils/axios";
-import { AxiosResponse } from "axios";
+import { UserProfile } from "src/interfaces/UserProfile";
 
 export const useUserStore = create<UserState>()(
     persist(
@@ -27,6 +27,7 @@ export const useUserStore = create<UserState>()(
                                     userStatus: UserStatus.LOGGED_IN,
                                     userAuthenticate:
                                         UserAuthenticate.UNAUTHORIZED,
+                                    userProfile: response.data.user,
                                 },
                             }));
                             return response;
@@ -45,6 +46,7 @@ export const useUserStore = create<UserState>()(
                                     userStatus: UserStatus.LOGGED_OUT,
                                     userAuthenticate:
                                         UserAuthenticate.UNAUTHORIZED,
+                                    userProfile: undefined,
                                 },
                             }));
                             return response;
@@ -59,6 +61,14 @@ export const useUserStore = create<UserState>()(
                     user: {
                         userStatus: UserStatus.LOGGED_IN,
                         userAuthenticate: UserAuthenticate.AUTHORIZED,
+                    },
+                })),
+            setUserProfile: (userProfile: UserProfile) =>
+                set(() => ({
+                    user: {
+                        userStatus: UserStatus.LOGGED_IN,
+                        userAuthenticate: UserAuthenticate.AUTHORIZED,
+                        userProfile: userProfile,
                     },
                 })),
         }),

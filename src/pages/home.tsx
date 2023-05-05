@@ -21,7 +21,6 @@ export const getOccuption = async (
     setOccupation: React.Dispatch<React.SetStateAction<Occupation[]>>
 ) => {
     await BEinstance.get("/client/get-all-occupation").then((value) => {
-        console.log(value)
         if (value.data) {
             setOccupation(value.data);
         }

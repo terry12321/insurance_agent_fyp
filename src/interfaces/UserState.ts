@@ -1,4 +1,5 @@
 import { AxiosResponse } from "axios";
+import { UserProfile } from "./UserProfile";
 
 /**
  * @enum {number}
@@ -17,6 +18,7 @@ export enum UserAuthenticate {
 interface User {
     userStatus: UserStatus;
     userAuthenticate: UserAuthenticate;
+    userProfile?: UserProfile;
 }
 
 export interface UserState {
@@ -24,4 +26,5 @@ export interface UserState {
     login: (email: string, password: string) => Promise<AxiosResponse>;
     logout: () => Promise<AxiosResponse>;
     authenticateDetail: () => void;
+    setUserProfile: (userProfile: UserProfile) => void;
 }

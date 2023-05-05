@@ -4,7 +4,7 @@ import { Trash, Upload as UploadIcon, X } from "tabler-icons-react";
 import { Select, UploadFile, UploadProps } from "antd";
 import { Occupation } from "./interface/ClientInterface";
 import { Upload, Button } from "antd";
-import { supabase } from "src/utils/supabase";
+import { deleteAllTempFiles, supabase } from "src/utils/supabase";
 import { Spin } from "antd";
 import { ClientSchema } from "src/schemas/ClientSchema";
 import { useForm } from "react-hook-form";
@@ -61,26 +61,46 @@ export const AddClientModal = ({
     });
 
     async function closeModal() {
+        await deleteAllTempFiles();
         setIsOpen(false);
         setFile(null);
         reset();
     }
 
-    const handleOnSubmit = (data: ClientFormProps) => {
+    const handleOnSubmit = async (data: ClientFormProps) => {
         if (!data.profileImage) {
             data.profileImage = "";
         }
-        uploadClient(data);
+
+        // before uploading client
+        // copy url path from temppicture to userpicture
+        const urlSplit = data.profileImage.split("/");
+        const tempPath = `${urlSplit[urlSplit.length - 2]}/${
+            urlSplit[urlSplit.length - 1]
+        }`;
+        const picPath = `userpicture/${urlSplit[urlSplit.length - 1]}`;
+        await supabase.storage
+            .from("files")
+            .copy(tempPath, picPath)
+            .then(async (value) => {
+                const url = await supabase.storage
+                    .from("files")
+                    .getPublicUrl(picPath);
+                data.profileImage = url.data.publicUrl;
+                uploadClient(data);
+            });
+
         closeModal();
     };
 
     const handleCustomUpload = async (RcCustomRequestOptions: any) => {
+        await deleteAllTempFiles();
         setShowSpin(true);
         if (RcCustomRequestOptions.file) {
             const file = RcCustomRequestOptions.file;
             const body = await supabase.storage
                 .from("files")
-                .upload(`userpicture/${file.name}`, file);
+                .upload(`temppicture/${file.name}`, file);
             if (body.data && body.data !== undefined) {
                 const url = await supabase.storage
                     .from("files")

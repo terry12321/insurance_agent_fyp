@@ -1,5 +1,6 @@
 import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { useUserStore } from "src/stores/UserStore";
 import { Logout, News } from "tabler-icons-react";
 
@@ -7,6 +8,10 @@ const Sidebar = () => {
     const { pathname } = useRouter();
     const router = useRouter();
     const logout = useUserStore((state) => state.logout);
+    const userStore = useUserStore();
+    const { userProfile } = useUserStore((state) => state.user);
+    const [profileImg, setProfileImg] = useState("");
+    const [name, setName] = useState("");
     const handleLogout = async () => {
         await logout().then((response) => {
             if (response) {
@@ -14,6 +19,18 @@ const Sidebar = () => {
             }
         });
     };
+
+    useEffect(() => {
+        if (userProfile) {
+            const name = `${userProfile.firstName} ${userProfile.lastName}`;
+            setName(name);
+            if (userProfile.imageUrl) {
+                setProfileImg(userProfile.imageUrl);
+            } else {
+                setProfileImg("/images/default-profile.png");
+            }
+        }
+    }, [userProfile, userStore]);
 
     return (
         <>
@@ -59,6 +76,18 @@ const Sidebar = () => {
                         </button>
                     </span>
                 </div>
+                <a
+                    href="/profile"
+                    className="flex h-20 items-center justify-center gap-2"
+                >
+                    <img
+                        width={25}
+                        height={25}
+                        className="rounded-full"
+                        src={profileImg}
+                    />
+                    <span className="text-[11px]">{name}</span>
+                </a>
             </div>
         </>
     );
