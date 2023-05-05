@@ -70,25 +70,26 @@ export const AddClientModal = ({
     const handleOnSubmit = async (data: ClientFormProps) => {
         if (!data.profileImage) {
             data.profileImage = "";
+            uploadClient(data);
+        } else {
+            // before uploading client
+            // copy url path from temppicture to userpicture
+            const urlSplit = data.profileImage.split("/");
+            const tempPath = `${urlSplit[urlSplit.length - 2]}/${
+                urlSplit[urlSplit.length - 1]
+            }`;
+            const picPath = `userpicture/${urlSplit[urlSplit.length - 1]}`;
+            await supabase.storage
+                .from("files")
+                .copy(tempPath, picPath)
+                .then(async (value) => {
+                    const url = await supabase.storage
+                        .from("files")
+                        .getPublicUrl(picPath);
+                    data.profileImage = url.data.publicUrl;
+                    uploadClient(data);
+                });
         }
-
-        // before uploading client
-        // copy url path from temppicture to userpicture
-        const urlSplit = data.profileImage.split("/");
-        const tempPath = `${urlSplit[urlSplit.length - 2]}/${
-            urlSplit[urlSplit.length - 1]
-        }`;
-        const picPath = `userpicture/${urlSplit[urlSplit.length - 1]}`;
-        await supabase.storage
-            .from("files")
-            .copy(tempPath, picPath)
-            .then(async (value) => {
-                const url = await supabase.storage
-                    .from("files")
-                    .getPublicUrl(picPath);
-                data.profileImage = url.data.publicUrl;
-                uploadClient(data);
-            });
 
         closeModal();
     };
