@@ -1,21 +1,37 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { DatePicker } from "antd";
-import { Dayjs } from "dayjs";
-import { Dispatch, Fragment, SetStateAction } from "react";
+import dayjs, { Dayjs } from "dayjs";
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from "react";
+import { Note } from "src/pages/bulletin";
 import { X } from "tabler-icons-react";
 
-export const BulletinModal = ({
-    date,
-    setDate,
+export const EditBulletinModal = ({
     isOpen,
+    note,
     setIsOpen,
-    setContent,
-    addTask,
+    handleUpdate,
 }: BulletinModalProps) => {
+    const dateFormat = "DD/MM/YYYY";
+    const [noteDate, setNoteDate] = useState<Dayjs | null>(null);
+    const [content, setContent] = useState("");
+
     async function closeModal() {
-        await addTask();
+        // await addTask();
+        if (note) {
+            note.content = content;
+            note.date = dayjs(noteDate).format(dateFormat).toString();
+            handleUpdate(note);
+        }
         setIsOpen(false);
     }
+
+    useEffect(() => {
+        if (note) {
+            setContent(note.content);
+            const noteDate = dayjs(note.date, dateFormat);
+            setNoteDate(noteDate);
+        }
+    }, [note]);
 
     return (
         <>
@@ -47,7 +63,7 @@ export const BulletinModal = ({
                                 <Dialog.Panel className="w-2/4 h-3/6 2xl:w-1/4 2xl:h-2/6 overflow-hidden rounded-2xl bg-white p-8 text-left align-middle shadow-xl transition-all">
                                     <div className="flex justify-between">
                                         <span className="font-semibold text-black text-2xl mb-4">
-                                            Add Task
+                                            Edit Task
                                         </span>
                                         <X
                                             className="h-6 cursor-pointer text-black"
@@ -62,11 +78,12 @@ export const BulletinModal = ({
                                                 </label>
                                                 <textarea
                                                     maxLength={300}
-                                                    onChange={(data) =>
+                                                    value={content}
+                                                    onChange={(e) => {
                                                         setContent(
-                                                            data.target.value
-                                                        )
-                                                    }
+                                                            e.target.value
+                                                        );
+                                                    }}
                                                     className="h-full bg-white outline-none border w-full p-2 mt-2 rounded-lg text-black"
                                                 />
                                             </div>
@@ -75,18 +92,20 @@ export const BulletinModal = ({
                                                     Date
                                                 </label>
                                                 <DatePicker
-                                                    onChange={setDate}
-                                                    value={date}
+                                                    value={noteDate}
+                                                    onChange={(e) => {
+                                                        setNoteDate(e);
+                                                    }}
                                                     className="w-1/4"
                                                 />
                                             </div>
                                             <div className="flex justify-end">
                                                 <button
-                                                    type="button"
+                                                    type="submit"
                                                     className="inline-flex justify-center rounded-md border border-transparent bg-black px-8 py-2 text-sm font-medium text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                                     onClick={closeModal}
                                                 >
-                                                    Add Task
+                                                    Update
                                                 </button>
                                             </div>
                                         </div>
@@ -102,10 +121,8 @@ export const BulletinModal = ({
 };
 
 interface BulletinModalProps {
-    date: Dayjs | null;
-    setDate: Dispatch<SetStateAction<Dayjs | null>>;
     isOpen: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
-    setContent: Dispatch<SetStateAction<string>>;
-    addTask: () => void;
+    note: Note | undefined;
+    handleUpdate: (note: Note) => void;
 }

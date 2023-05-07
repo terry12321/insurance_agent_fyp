@@ -1,17 +1,16 @@
 import { Dropdown } from "antd";
-import { Dayjs } from "dayjs";
-import { useRouter } from "next/router";
+import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { DragDropContext, Draggable, DropResult } from "react-beautiful-dnd";
 import { BulletinModal } from "src/components/bulletin/BulletinModal";
-import { BulletinDocumentPage } from "src/components/bulletin/BulletinDocument";
 import { StrictDroppable } from "src/components/bulletin/StrictDroppable";
 import { DeleteModal } from "src/components/common/DeleteModal";
 import { BEinstance } from "src/utils/axios";
-import { DotsVertical, Note, Plus } from "tabler-icons-react";
+import { DotsVertical, Edit, Plus, Trash } from "tabler-icons-react";
 import BulletinTab from "src/components/bulletin/BulletinTab";
+import { EditBulletinModal } from "src/components/bulletin/EditBulletinModal";
 
-interface Note {
+export interface Note {
     id?: number;
     date: string;
     content: string;
@@ -31,6 +30,8 @@ export default function Forum() {
     const [isOpen, setIsOpen] = useState(false);
     const [isDelete, setIsDelete] = useState(false);
     const [isOpenDelModal, setIsOpenDelModal] = useState(false);
+    const [isOpenEditModal, setIsOpenEditModal] = useState(false);
+    const [note, setNote] = useState<Note | undefined>(undefined);
     const [delId, setDelId] = useState<number | undefined>(undefined);
     const [date, setDate] = useState<Dayjs | null>(null);
     const [content, setContent] = useState("");
@@ -69,13 +70,19 @@ export default function Forum() {
             setItems(value.data);
         });
     };
+
+    const displayDate = (date: string) => {
+        const noteDate = dayjs(date, "DD/MM/YYYY");
+        const weekday = noteDate.format("dddd");
+        const month = noteDate.format("MMMM");
+        const day = noteDate.format("DD");
+        const year = noteDate.format("YYYY");
+        const finalDate = `${weekday}, ${day} ${month} ${year}`;
+        return finalDate;
+    };
     const addTask = async () => {
         if (date) {
-            const weekday = date.format("dddd");
-            const month = date.format("MMMM");
-            const day = date.format("DD");
-            const year = date.format("YYYY");
-            const finalDate = `${weekday}, ${day}th ${month} ${year}`;
+            const finalDate = date.format("DD/MM/YYYY");
             const noteCardId = items.find((value) => {
                 return value.id.toString() === cardId;
             });
@@ -94,6 +101,10 @@ export default function Forum() {
             }
         }
     };
+
+    const handleUpdate = async (note: Note) => {
+        await BEinstance.put(`/task/${note.id}`, note);
+    };
     const deleteNote = async (id: number) => {
         await BEinstance.post(`/task/${id}`).then(async (value) => {
             if (value) {
@@ -101,7 +112,7 @@ export default function Forum() {
             }
         });
     };
-    const dragEnd = (result: DropResult) => {
+    const dragEnd = async (result: DropResult) => {
         const { source, destination } = result;
         if (!destination) {
             return;
@@ -129,7 +140,14 @@ export default function Forum() {
         if (destinationCard && dragItem) {
             destinationCard.notes.splice(destination.index, 0, dragItem);
         }
-        setItems(finalItems);
+        if (dragItem && destinationCard) {
+            dragItem.cardId = destinationCard.cardId;
+            await BEinstance.put(`/task/${dragItem.id}`, dragItem).then(
+                (value) => {
+                    if (value.data) setItems(finalItems);
+                }
+            );
+        }
     };
 
     useEffect(() => {
@@ -164,7 +182,7 @@ export default function Forum() {
                                             <span className="text-2xl text-black font-medium">
                                                 {item.title}
                                             </span>
-                                            {item.notes.map((item, noteIdx) => (
+                                            {item.notes.map((note, noteIdx) => (
                                                 <Draggable
                                                     key={`drag${idx}note${noteIdx}`}
                                                     draggableId={`drag${idx}note${noteIdx}`}
@@ -186,7 +204,7 @@ export default function Forum() {
                                                             <div className="flex justify-between">
                                                                 <span className="w-11/12">
                                                                     {
-                                                                        item.content
+                                                                        note.content
                                                                     }
                                                                 </span>
                                                                 <span className="w-1/12 pt-1">
@@ -198,15 +216,46 @@ export default function Forum() {
                                                                         menu={{
                                                                             items: [
                                                                                 {
-                                                                                    label: "delete",
+                                                                                    label: (
+                                                                                        <div className="flex justify-start gap-2">
+                                                                                            <Trash
+                                                                                                size={
+                                                                                                    20
+                                                                                                }
+                                                                                            />{" "}
+                                                                                            Delete
+                                                                                        </div>
+                                                                                    ),
                                                                                     key: 0,
                                                                                     onClick:
                                                                                         () => {
                                                                                             setDelId(
-                                                                                                item.id
+                                                                                                note.id
                                                                                             );
                                                                                             setIsOpenDelModal(
                                                                                                 true
+                                                                                            );
+                                                                                        },
+                                                                                },
+                                                                                {
+                                                                                    label: (
+                                                                                        <div className="flex justify-start gap-2">
+                                                                                            <Edit
+                                                                                                size={
+                                                                                                    20
+                                                                                                }
+                                                                                            />{" "}
+                                                                                            Edit
+                                                                                        </div>
+                                                                                    ),
+                                                                                    key: 1,
+                                                                                    onClick:
+                                                                                        () => {
+                                                                                            setIsOpenEditModal(
+                                                                                                true
+                                                                                            );
+                                                                                            setNote(
+                                                                                                note
                                                                                             );
                                                                                         },
                                                                                 },
@@ -234,7 +283,9 @@ export default function Forum() {
                                                             </div>
                                                             <div></div>
                                                             <div className="text-gray-400">
-                                                                {item.date}
+                                                                {displayDate(
+                                                                    note.date
+                                                                )}
                                                             </div>
                                                         </div>
                                                     )}
@@ -275,6 +326,12 @@ export default function Forum() {
                     isOpen={isOpenDelModal}
                     setIsOpen={setIsOpenDelModal}
                     setIsDelete={setIsDelete}
+                />
+                <EditBulletinModal
+                    note={note}
+                    isOpen={isOpenEditModal}
+                    setIsOpen={setIsOpenEditModal}
+                    handleUpdate={handleUpdate}
                 />
             </>
         </div>
