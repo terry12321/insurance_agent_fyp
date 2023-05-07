@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useUserStore } from "src/stores/UserStore";
 import { Logout, News } from "tabler-icons-react";
+import Image from "next/image";
 
 const Sidebar = () => {
     const { pathname } = useRouter();
@@ -35,7 +36,15 @@ const Sidebar = () => {
     return (
         <>
             <div className="flex h-full flex-col justify-between bg-btnColor-300 bg-black text-white">
-                <div className="flex flex-col mt-40">
+                <div className="flex flex-col mt-10">
+                    <div className="flex justify-center pb-10">
+                        <Image
+                            alt={"FA-Guardix"}
+                            width={120}
+                            height={120}
+                            src={"/images/logo2.svg"}
+                        />
+                    </div>
                     <a
                         href="/home"
                         className={`w-full hover:bg-white hover:text-black pl-10 2xl:pl-16 ${

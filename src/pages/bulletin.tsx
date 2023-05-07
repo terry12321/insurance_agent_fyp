@@ -35,31 +35,6 @@ export default function Forum() {
     const [date, setDate] = useState<Dayjs | null>(null);
     const [content, setContent] = useState("");
     const [cardId, setCardId] = useState("");
-    const router = useRouter();
-
-    const cards = [
-        {
-            id: 1,
-            cardId: "card1",
-            title: "To Do",
-            color: "bg-[#CDDFE0]",
-            btnColor: "bg-[#B5CACB]",
-        },
-        {
-            id: 2,
-            cardId: "card2",
-            title: "In Progress",
-            color: "bg-[#D9D8FF]",
-            btnColor: "bg-[#C0BFE7]",
-        },
-        {
-            id: 3,
-            cardId: "card3",
-            title: "Completed",
-            color: "bg-[#D0E7C6]",
-            btnColor: "bg-[#AFCAA4]",
-        },
-    ];
 
     function openModal() {
         setIsOpen(true);

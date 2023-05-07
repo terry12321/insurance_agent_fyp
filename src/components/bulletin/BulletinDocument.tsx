@@ -14,6 +14,12 @@ const getExtension = (url: string) => {
     const extension = url.substring(url.lastIndexOf("."));
     if (extension === ".jpeg" || extension === ".jpg") {
         return `/images/jpg-file.png`;
+    } else if (extension === ".xlsx") {
+        return `/images/xls-file.png`;
+    } else if (extension === ".pptx") {
+        return `/images/ppt-file.png`;
+    } else if (extension === ".docx") {
+        return `/images/doc-file.png`;
     } else {
         return `/images/${extension.replace(".", "")}-file.png`;
     }
