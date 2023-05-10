@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { UserStatus } from "src/interfaces/UserState";
 import { Table } from "antd";
 import { useUserStore } from "../stores/UserStore";
-import { Trash } from "tabler-icons-react";
+import { TableAlias, Trash } from "tabler-icons-react";
 import {
     AddClientModal,
     ClientFormProps,
@@ -16,6 +16,8 @@ import {
     Occupation,
 } from "src/components/home/interface/ClientInterface";
 import { toast } from "react-hot-toast";
+import { MyInput } from "src/components/common/testingComponent";
+import { on } from "events";
 
 export const getOccuption = async (
     setOccupation: React.Dispatch<React.SetStateAction<Occupation[]>>
@@ -146,6 +148,7 @@ export default function Home() {
 
     return (
         <div className="flex flex-col gap-10 w-5/6 py-24">
+            <MyInput/>
             <div className="flex justify-between text-black">
                 <span className="font-medium text-4xl">Clients</span>
                 <button
